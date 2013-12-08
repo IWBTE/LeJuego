@@ -137,11 +137,15 @@ class Vicho(pygame.sprite.Sprite):
     def __init__(self, x,imag):
         pygame.sprite.Sprite.__init__(self)
         self.asesinatos = 0
+        self.hp = 100
         self.image = load_image(imag, IMG_DIR, alpha=True)
         self.rect = self.image.get_rect()
         self.rect.centerx = x
         self.rect.centery = SCREEN_HEIGHT / 2
         self.contadorBalas = 0
+        self.inv = False
+        self.lastHited = 0
+        self.vivo = True
 
     def humano(self):
         # Controlar que la paleta no salga de la pantalla
@@ -174,7 +178,11 @@ class vichoLover(pygame.sprite.Sprite):
         if objetivo.rect.centery - self.rect.centery >= 0:
             self.rect.centery += 1
         else:
-            self.rect.centery -= 1 
+            self.rect.centery -= 1
+
+    def volanteOMaleta(self, machucao):
+        if self.rect.colliderect(machucao.rect) and machucao.inv == False:
+            return True
 
 class daGame:
     def __init__(self):
@@ -185,6 +193,7 @@ class daGame:
         self.tiempoActual = 0
         self.spawn = 0
         self.eliminacion = False
+        self.continuar = True
 
 def main():
     pygame.init()
@@ -204,7 +213,7 @@ def main():
     # el bucle principal del juego
     try:
         
-        while True:
+        while jugador1.vivo and game.continuar:
             game.tiempoActual = time.clock()
             directores = []
             clock.tick(60)
@@ -215,7 +224,7 @@ def main():
             # El input del teclado
             for event in pygame.event.get():
                 if event.type == pygame.QUIT:
-                    sys.exit(0)
+                    game.continuar = False
             if pygame.key.get_pressed()[K_UP]:
                 jugador1.rect.y -= 3
                 if not("u" in directores):
@@ -251,6 +260,10 @@ def main():
             #numero = uniform(0,1)
             #game.enemies += 1
             game.tiempoActual = time.clock()
+
+            if game.tiempoActual - jugador1.lastHited >= 2:
+                jugador1.inv = False
+            
             if game.tiempoActual - game.spawn >= 4 and game.enemies<10:
                game.spawn = game.tiempoActual
                game.lovers.append(vichoLover("pela.gif"))
@@ -294,6 +307,7 @@ def main():
                                 game.lovers[j].kill()
                                 game.enemies -= 1
                                 game.eliminacion = True
+                                jugador1.asesinatos+=1
 
             if len(game.lovers)>0 and game.eliminacion:
                 count = 0
@@ -304,12 +318,23 @@ def main():
                         count+=1
                 game.eliminacion = False
 
+            if len(game.lovers)>0:
+                for i in range(len(game.lovers)):
+                    if game.lovers[i].vivo and game.lovers[i].volanteOMaleta(jugador1) and not(jugador1.inv):
+                        jugador1.inv = True
+                        jugador1.lastHited = game.tiempoActual
+                        jugador1.hp -= 50
+                        if jugador1.hp <= 0:
+                            jugador1.vivo=False
+
             #screen.blit(jugador2.image, jugador2.rect)
             #para hacer aparecer al jugador
             pygame.display.flip()
 
     except ValueError:
         pass
+
+    print "GG"
 
 
 if __name__ == "__main__":
