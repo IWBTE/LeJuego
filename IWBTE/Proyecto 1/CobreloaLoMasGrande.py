@@ -6,6 +6,7 @@ from random import uniform
 from random import randint
 from threading import Timer
 import time
+from math import floor
 
 # -----------
 # Constantes
@@ -131,7 +132,14 @@ class Bala(pygame.sprite.Sprite):
                     self.kill()
                     self.mov = False
         
-                       
+class hp(pygame.sprite.Sprite):
+    def __init__(self,imag):
+        pygame.sprite.Sprite.__init__(self)
+        self.image = load_image(imag, IMG_DIR, alpha = True)
+        self.rect = self.image.get_rect()
+        self.rect.centerx=85
+        self.rect.centery=15
+                              
 class Vicho(pygame.sprite.Sprite):
 
     def __init__(self, x,imag):
@@ -158,8 +166,11 @@ class Vicho(pygame.sprite.Sprite):
         elif self.rect.right >= SCREEN_WIDTH:
             self.rect.right = SCREEN_WIDTH
 
+    def dam(self,cantidad):
+        self.hp -= cantidad
 
-class vichoLover(pygame.sprite.Sprite):
+
+class enemy(pygame.sprite.Sprite):
     def __init__(self,imag):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image(imag, IMG_DIR,alpha=True)
@@ -170,6 +181,9 @@ class vichoLover(pygame.sprite.Sprite):
         self.hp = 30
         self.vivo = True
 
+    def volanteOMaleta(self, machucao):
+        if self.rect.colliderect(machucao.rect) and machucao.inv == False:
+            return True
     def mover(self, objetivo):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
             self.rect.centerx += 1
@@ -179,10 +193,9 @@ class vichoLover(pygame.sprite.Sprite):
             self.rect.centery += 1
         else:
             self.rect.centery -= 1
-
-    def volanteOMaleta(self, machucao):
-        if self.rect.colliderect(machucao.rect) and machucao.inv == False:
-            return True
+#Arreglar este desastre
+class vichoLover(enemy):
+    pass
 
 class daGame:
     def __init__(self):
@@ -202,6 +215,7 @@ def main():
     pygame.display.set_caption("VichoPLS")
 
     # cargamos los objetos
+    miHP = hp("hp100.png")
     fondo = load_image("fondo.jpg", IMG_DIR, alpha=False)
     jugador1 = Vicho(40,"plox.gif")
     #jugador2 = Vicho(SCREEN_WIDTH-40,"cc.bmp")
@@ -264,7 +278,8 @@ def main():
             if game.tiempoActual - jugador1.lastHited >= 2:
                 jugador1.inv = False
             
-            if game.tiempoActual - game.spawn >= 4 and game.enemies<10:
+            #An enemy has been spawned
+            if game.tiempoActual - game.spawn >= 3 and game.enemies<10:
                game.spawn = game.tiempoActual
                game.lovers.append(vichoLover("pela.gif"))
                game.enemies += 1
@@ -272,7 +287,9 @@ def main():
             # actualizamos la pantalla
             screen.blit(fondo, (0, 0))
             screen.blit(jugador1.image, jugador1.rect)
-
+            
+            
+            
             
 
             if len(game.balas)>0:
@@ -281,6 +298,7 @@ def main():
                     if game.balas[i].mov:
                         screen.blit(game.balas[i].image,game.balas[i].rect)
 
+            #Eliminando balas perdidas
             if len(game.balas)>0:
                 count = 0
                 while count<len(game.balas):
@@ -295,6 +313,7 @@ def main():
                         game.lovers[i].mover(jugador1)
                         screen.blit(game.lovers[i].image,game.lovers[i].rect)
 
+            #Matando Vicholovers
             if len(game.lovers)>0 and len(game.balas)>0:
                 for i in range(len(game.balas)):
                     for j in range(len(game.lovers)):
@@ -309,6 +328,7 @@ def main():
                                 game.eliminacion = True
                                 jugador1.asesinatos+=1
 
+            #Eliminando las sobras
             if len(game.lovers)>0 and game.eliminacion:
                 count = 0
                 while count<len(game.lovers):
@@ -318,17 +338,23 @@ def main():
                         count+=1
                 game.eliminacion = False
 
+            #VicholoversAttack
             if len(game.lovers)>0:
                 for i in range(len(game.lovers)):
                     if game.lovers[i].vivo and game.lovers[i].volanteOMaleta(jugador1) and not(jugador1.inv):
                         jugador1.inv = True
                         jugador1.lastHited = game.tiempoActual
-                        jugador1.hp -= 50
+                        jugador1.dam(50)
                         if jugador1.hp <= 0:
                             jugador1.vivo=False
 
             #screen.blit(jugador2.image, jugador2.rect)
             #para hacer aparecer al jugador
+            daHP = int(floor(jugador1.hp))
+            daHP2 = "hp"+str(daHP)+".png"
+            miHP.image = load_image(daHP2,IMG_DIR,alpha=True)
+            screen.blit(miHP.image,miHP.rect)
+
             pygame.display.flip()
 
     except ValueError:
