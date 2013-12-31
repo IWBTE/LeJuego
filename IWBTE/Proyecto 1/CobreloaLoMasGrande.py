@@ -40,6 +40,10 @@ def load_image(nombre, dir_imagen, alpha=False):
 # -----------------------------------------------
 # Creamos los sprites (clases) de los objetos del juego:
 
+vicho_0 = {} #direccion Mar
+vicho_0[0]=("imagenes\Vicho\Frames\r1.gif")
+vicho_0[1]=("imagenes\Vicho\Frames\r2.gif")
+vicho_0[2]=("imagenes\Vicho\Frames\r3.gif")
 
 
 
@@ -47,11 +51,11 @@ class Bala(pygame.sprite.Sprite):
     def __init__(self, vichopls,imag,dir):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image(imag, IMG_DIR, alpha=True)
-        self.rect = self.image.get_rect()
+        self.rect = Rect(0,0,10,10)
         self.x0 = vichopls.rect.centerx
-        self.y0 = vichopls.rect.centery
-        self.rect.centerx =vichopls.rect.centerx
-        self.rect.centery =vichopls.rect.centery
+        self.y0 = vichopls.rect.centery+10
+        self.rect.centerx =vichopls.rect.centerx+10
+        self.rect.centery =vichopls.rect.centery+10
         self.dir = dir
         self.mov = True
 
@@ -144,12 +148,13 @@ class Vicho(pygame.sprite.Sprite):
 
     def __init__(self, x,imag):
         pygame.sprite.Sprite.__init__(self)
+        self.fr = 1
         self.asesinatos = 0
         self.hp = 100
         self.image = load_image(imag, IMG_DIR, alpha=True)
-        self.rect = self.image.get_rect()
-        self.rect.centerx = x
-        self.rect.centery = SCREEN_HEIGHT / 2
+        self.rect = Rect(0,0,10,15)
+        self.rect.centerx = x+10
+        self.rect.centery = (SCREEN_HEIGHT / 2)+10
         self.contadorBalas = 0
         self.inv = False
         self.lastHited = 0
@@ -172,10 +177,11 @@ class Vicho(pygame.sprite.Sprite):
 
 class enemy(pygame.sprite.Sprite):
     def __init__(self,imag):
+        self.fr=1
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image(imag, IMG_DIR,alpha=True)
         num = randint(0,1)
-        self.rect = self.image.get_rect()
+        self.rect = Rect(0,0,20,30)
         self.rect.centerx=SCREEN_WIDTH-50
         self.rect.centery=SCREEN_HEIGHT*num
         self.hp = 30
@@ -186,13 +192,29 @@ class enemy(pygame.sprite.Sprite):
             return True
     def mover(self, objetivo):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
+            self.image = load_image("Lover/Frames/r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centerx += 1
+            self.fr+=1
+            if self.fr>3:
+                self.fr=1
         else:
+            self.image = load_image("Lover/Frames/l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centerx -= 1
+            self.fr+=1
+            if self.fr>3:
+                self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
+            self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centery += 1
+            self.fr+=1
+            if self.fr>3:
+                self.fr=1
         else:
+            self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centery -= 1
+            self.fr+=1
+            if self.fr>3:
+                self.fr=1
 #Arreglar este desastre
 class vichoLover(enemy):
     pass
@@ -216,8 +238,8 @@ def main():
 
     # cargamos los objetos
     miHP = hp("hp100.png")
-    fondo = load_image("fondo.jpg", IMG_DIR, alpha=False)
-    jugador1 = Vicho(40,"plox.gif")
+    fondo = load_image("fondo.png", IMG_DIR, alpha=False)
+    jugador1 = Vicho(40,"Vicho/Frames/r1.gif")
     #jugador2 = Vicho(SCREEN_WIDTH-40,"cc.bmp")
     clock = pygame.time.Clock()
     pygame.key.set_repeat(1, 25)  # Activa repeticion de teclas
@@ -226,11 +248,13 @@ def main():
     
     # el bucle principal del juego
     try:
-        
+        pygame.mixer.init()
+        pygame.mixer.music.load("game.wav")
+        pygame.mixer.music.play(-1)
         while jugador1.vivo and game.continuar:
             game.tiempoActual = time.clock()
             directores = []
-            clock.tick(60)
+            clock.tick(42)
 
             # Actualizamos los obejos en pantalla
             jugador1.humano()
@@ -240,21 +264,25 @@ def main():
                 if event.type == pygame.QUIT:
                     game.continuar = False
             if pygame.key.get_pressed()[K_UP]:
+                jugador1.image = load_image("Vicho/Frames/u"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
                 jugador1.rect.y -= 3
                 if not("u" in directores):
                     directores.append("u")
                 game.ultimo = "u"
             if pygame.key.get_pressed()[K_DOWN]:
+                jugador1.image = load_image("Vicho/Frames/d"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
                 jugador1.rect.y += 3
                 if not("d" in directores):
                     directores.append("d")
                 game.ultimo = "d"
             if pygame.key.get_pressed()[K_LEFT]:
+                jugador1.image = load_image("Vicho/Frames/l"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
                 jugador1.rect.x -= 3
                 if not("l" in directores):
                     directores.append("l")
                 game.ultimo = "l"
             if pygame.key.get_pressed()[K_RIGHT]:
+                jugador1.image = load_image("Vicho/Frames/r"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
                 jugador1.rect.x += 3
                 if not("r" in directores):
                     directores.append("r")
@@ -271,6 +299,9 @@ def main():
             if jugador1.contadorBalas>=20:
                 jugador1.contadorBalas=0
                 
+            jugador1.fr+=1
+            if jugador1.fr>3:
+                jugador1.fr = 1
             #numero = uniform(0,1)
             #game.enemies += 1
             game.tiempoActual = time.clock()
@@ -281,7 +312,7 @@ def main():
             #An enemy has been spawned
             if game.tiempoActual - game.spawn >= 3 and game.enemies<10:
                game.spawn = game.tiempoActual
-               game.lovers.append(vichoLover("pela.gif"))
+               game.lovers.append(vichoLover("Lover/Frames/l1.gif"))
                game.enemies += 1
         
             # actualizamos la pantalla
@@ -344,13 +375,17 @@ def main():
                     if game.lovers[i].vivo and game.lovers[i].volanteOMaleta(jugador1) and not(jugador1.inv):
                         jugador1.inv = True
                         jugador1.lastHited = game.tiempoActual
-                        jugador1.dam(50)
+                        jugador1.dam(30)
                         if jugador1.hp <= 0:
                             jugador1.vivo=False
 
             #screen.blit(jugador2.image, jugador2.rect)
             #para hacer aparecer al jugador
             daHP = int(floor(jugador1.hp))
+            if daHP<0:
+                daHP=0
+            if daHP>100:
+                daHP=100
             daHP2 = "hp"+str(daHP)+".png"
             miHP.image = load_image(daHP2,IMG_DIR,alpha=True)
             screen.blit(miHP.image,miHP.rect)
@@ -359,7 +394,7 @@ def main():
 
     except ValueError:
         pass
-
+    pygame.mixer.quit()
     print "GG"
 
 
