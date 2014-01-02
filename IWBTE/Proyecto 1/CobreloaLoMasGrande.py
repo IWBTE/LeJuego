@@ -40,10 +40,7 @@ def load_image(nombre, dir_imagen, alpha=False):
 # -----------------------------------------------
 # Creamos los sprites (clases) de los objetos del juego:
 
-vicho_0 = {} #direccion Mar
-vicho_0[0]=("imagenes\Vicho\Frames\r1.gif")
-vicho_0[1]=("imagenes\Vicho\Frames\r2.gif")
-vicho_0[2]=("imagenes\Vicho\Frames\r3.gif")
+
 
 
 
@@ -53,8 +50,8 @@ class Bala(pygame.sprite.Sprite):
         self.image = load_image(imag, IMG_DIR, alpha=True)
         self.rect = Rect(0,0,10,10)
         self.x0 = vichopls.rect.centerx
-        self.y0 = vichopls.rect.centery+10
-        self.rect.centerx =vichopls.rect.centerx+10
+        self.y0 = vichopls.rect.centery
+        self.rect.centerx =vichopls.rect.centerx
         self.rect.centery =vichopls.rect.centery+10
         self.dir = dir
         self.mov = True
@@ -153,8 +150,8 @@ class Vicho(pygame.sprite.Sprite):
         self.hp = 100
         self.image = load_image(imag, IMG_DIR, alpha=True)
         self.rect = Rect(0,0,10,15)
-        self.rect.centerx = x+10
-        self.rect.centery = (SCREEN_HEIGHT / 2)+10
+        self.rect.centerx = x
+        self.rect.centery = (SCREEN_HEIGHT / 2)
         self.contadorBalas = 0
         self.inv = False
         self.lastHited = 0
@@ -162,14 +159,14 @@ class Vicho(pygame.sprite.Sprite):
 
     def humano(self):
         # Controlar que la paleta no salga de la pantalla
-        if self.rect.bottom >= SCREEN_HEIGHT:
-            self.rect.bottom = SCREEN_HEIGHT
+        if self.rect.bottom >= SCREEN_HEIGHT-10:
+            self.rect.bottom = SCREEN_HEIGHT-10
         elif self.rect.top <= 0:
             self.rect.top = 0
         if self.rect.left <= 0:
             self.rect.left = 0
-        elif self.rect.right >= SCREEN_WIDTH:
-            self.rect.right = SCREEN_WIDTH
+        elif self.rect.right >= SCREEN_WIDTH-10:
+            self.rect.right = SCREEN_WIDTH-10
 
     def dam(self,cantidad):
         self.hp -= cantidad
@@ -193,24 +190,28 @@ class enemy(pygame.sprite.Sprite):
     def mover(self, objetivo):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
             self.image = load_image("Lover/Frames/r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            
             self.rect.centerx += 1
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             self.image = load_image("Lover/Frames/l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            
             self.rect.centerx -= 1
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
-            self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            if objetivo.rect.centery - self.rect.centery >= 10:
+                self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centery += 1
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
-            self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            if objetivo.rect.centery - self.rect.centery <= -10:
+                self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             self.rect.centery -= 1
             self.fr+=1
             if self.fr>3:
