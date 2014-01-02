@@ -62,7 +62,7 @@ class Bala(pygame.sprite.Sprite):
             return True
 
 
-    def mover(self):
+    def mover(self, reloj):
         self.count+=1
         if self.count>8:
             self.count=1
@@ -70,70 +70,70 @@ class Bala(pygame.sprite.Sprite):
         if len(self.dir)==1:
             if "u" in self.dir:
                 if abs(abs(self.rect.centery - 5) - abs(self.y0)) <200:
-                    self.rect.centery-=5
+                    self.rect.centery-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "d" in self.dir:
                 if abs(abs(self.rect.centery + 5) - abs(self.y0)) <200:
-                    self.rect.centery+=5
+                    self.rect.centery+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "r" in self.dir:
                 if abs(abs(self.rect.centerx + 5) - abs(self.x0)) <200:
-                    self.rect.centerx+=5
+                    self.rect.centerx+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "l" in self.dir:
                 if abs(abs(self.rect.centerx - 5) - abs(self.x0)) <200:
-                    self.rect.centerx-=5
+                    self.rect.centerx-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
         if len(self.dir)>1:
             if "u" in self.dir and "r" in self.dir:
                 if abs(abs(self.rect.centery - 5) - abs(self.y0)) <200:
-                    self.rect.centery-=5
+                    self.rect.centery-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
                 if abs(abs(self.rect.centerx + 5) - abs(self.x0)) <200:
-                    self.rect.centerx+=5
+                    self.rect.centerx+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "u" in self.dir and "l" in self.dir:
                 if abs(abs(self.rect.centery - 5) - abs(self.y0)) <200:
-                    self.rect.centery-=5
+                    self.rect.centery-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
                 if abs(abs(self.rect.centerx - 5) - abs(self.x0)) <200:
-                    self.rect.centerx-=5
+                    self.rect.centerx-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "d" in self.dir and "r" in self.dir:
                 if abs(abs(self.rect.centery + 5) - abs(self.y0)) <200:
-                    self.rect.centery+=5
+                    self.rect.centery+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
                 if abs(abs(self.rect.centerx + 5) - abs(self.x0)) <200:
-                    self.rect.centerx+=5
+                    self.rect.centerx+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
             if "d" in self.dir and "l" in self.dir:
                 if abs(abs(self.rect.centery + 5) - abs(self.y0)) <200:
-                    self.rect.centery+=5
+                    self.rect.centery+=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
                 if abs(abs(self.rect.centerx - 5) - abs(self.x0)) <200:
-                    self.rect.centerx-=5
+                    self.rect.centerx-=5.5*(reloj/30)
                 else:
                     self.kill()
                     self.mov = False
@@ -192,32 +192,32 @@ class enemy(pygame.sprite.Sprite):
     def volanteOMaleta(self, machucao):
         if self.rect.colliderect(machucao.rect) and machucao.inv == False:
             return True
-    def mover(self, objetivo):
+    def mover(self, objetivo, reloj):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
             self.image = load_image("Lover/Frames/r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx += 1
+            self.rect.centerx += 3.2*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             self.image = load_image("Lover/Frames/l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx -= 1
+            self.rect.centerx -= 3.2*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
                 self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery += 1
+            self.rect.centery += 3.2*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
                 self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery -= 1
+            self.rect.centery -= 3.2*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
@@ -260,8 +260,8 @@ def main():
         while jugador1.vivo and game.continuar:
             game.tiempoActual = time.clock()
             directores = []
-            clock.tick(42)
-
+            leReloj = float(clock.tick(42))
+            
             # Actualizamos los obejos en pantalla
             jugador1.humano()
 
@@ -271,25 +271,25 @@ def main():
                     game.continuar = False
             if pygame.key.get_pressed()[K_UP]:
                 jugador1.image = load_image("Vicho/Frames/u"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
-                jugador1.rect.y -= 3
+                jugador1.rect.y -= (3*(leReloj/30))
                 if not("u" in directores):
                     directores.append("u")
                 game.ultimo = "u"
             if pygame.key.get_pressed()[K_DOWN]:
                 jugador1.image = load_image("Vicho/Frames/d"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
-                jugador1.rect.y += 3
+                jugador1.rect.y += (3*(leReloj/30))
                 if not("d" in directores):
                     directores.append("d")
                 game.ultimo = "d"
             if pygame.key.get_pressed()[K_LEFT]:
                 jugador1.image = load_image("Vicho/Frames/l"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
-                jugador1.rect.x -= 3
+                jugador1.rect.x -= (3*(leReloj/30))
                 if not("l" in directores):
                     directores.append("l")
                 game.ultimo = "l"
             if pygame.key.get_pressed()[K_RIGHT]:
                 jugador1.image = load_image("Vicho/Frames/r"+str(jugador1.fr)+".gif",IMG_DIR,alpha=False)
-                jugador1.rect.x += 3
+                jugador1.rect.x += (3*(leReloj/30))
                 if not("r" in directores):
                     directores.append("r")
                 game.ultimo = "r"
@@ -331,7 +331,7 @@ def main():
 
             if len(game.balas)>0:
                 for i in range(len(game.balas)):
-                    game.balas[i].mover()
+                    game.balas[i].mover(leReloj)
                     if game.balas[i].mov:
                         screen.blit(game.balas[i].image,game.balas[i].rect)
 
@@ -347,7 +347,7 @@ def main():
             if len(game.lovers)>0:
                 for i in range(len(game.lovers)):
                     if game.lovers[i].vivo==True:
-                        game.lovers[i].mover(jugador1)
+                        game.lovers[i].mover(jugador1,leReloj)
                         screen.blit(game.lovers[i].image,game.lovers[i].rect)
 
             #Matando Vicholovers
