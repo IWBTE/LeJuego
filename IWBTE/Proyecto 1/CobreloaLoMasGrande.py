@@ -47,6 +47,7 @@ def load_image(nombre, dir_imagen, alpha=False):
 class Bala(pygame.sprite.Sprite):
     def __init__(self, vichopls,imag,dir):
         pygame.sprite.Sprite.__init__(self)
+        self.count = 1
         self.image = load_image(imag, IMG_DIR, alpha=True)
         self.rect = Rect(0,0,10,10)
         self.x0 = vichopls.rect.centerx
@@ -62,6 +63,10 @@ class Bala(pygame.sprite.Sprite):
 
 
     def mover(self):
+        self.count+=1
+        if self.count>8:
+            self.count=1
+        self.image = load_image("Baqueta/Frames/"+str(self.count)+".gif", IMG_DIR, alpha=True)
         if len(self.dir)==1:
             if "u" in self.dir:
                 if abs(abs(self.rect.centery - 5) - abs(self.y0)) <200:
@@ -292,7 +297,7 @@ def main():
                 d = list(game.ultimo)
                 jugador1.contadorBalas +=1
                 if len(directores)>0 and not("l" in directores and "r" in directores) and not("u" in directores and "d" in directores):
-                    game.balas.append(Bala(jugador1,"bola.png",directores))
+                    game.balas.append(Bala(jugador1,"Baqueta/Frames/1.gif",directores))
                 else:
                     game.balas.append(Bala(jugador1,"bola.png",d))
             if jugador1.contadorBalas>=1:
