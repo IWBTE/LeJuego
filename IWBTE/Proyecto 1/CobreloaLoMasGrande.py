@@ -196,28 +196,28 @@ class enemy(pygame.sprite.Sprite):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
             self.image = load_image("Lover/Frames/r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx += 3.2*(reloj/30)
+            self.rect.centerx += 3.05*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             self.image = load_image("Lover/Frames/l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx -= 3.2*(reloj/30)
+            self.rect.centerx -= 3.05*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
                 self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery += 3.2*(reloj/30)
+            self.rect.centery += 3.05*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
                 self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery -= 3.2*(reloj/30)
+            self.rect.centery -= 3.05*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
@@ -316,7 +316,7 @@ def main():
                 jugador1.inv = False
             
             #An enemy has been spawned
-            if game.tiempoActual - game.spawn >= 3 and game.enemies<10:
+            if game.tiempoActual - game.spawn >= 1 and game.enemies<10:
                game.spawn = game.tiempoActual
                game.lovers.append(vichoLover("Lover/Frames/l1.gif"))
                game.enemies += 1
