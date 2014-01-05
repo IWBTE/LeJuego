@@ -277,7 +277,7 @@ def main():
     # el bucle principal del juego
     try:
         pygame.mixer.init()
-        pygame.mixer.music.load("game.wav")
+        pygame.mixer.music.load("leJuego.wav")
         laBala = load_sound("Bala.wav")
         
         pygame.mixer.music.play(-1)
