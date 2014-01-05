@@ -36,6 +36,19 @@ def load_image(nombre, dir_imagen, alpha=False):
         image = image.convert()
     return image
 
+class dummysound:
+    def play(self): pass
+
+def load_sound(file):
+    if not pygame.mixer: return dummysound()
+    #file = os.path.join(main_dir, 'data', file)
+    try:
+        sound = pygame.mixer.Sound(file)
+        return sound
+    except pygame.error:
+        print ('Warning, unable to load, %s' % file)
+    return dummysound()
+
 
 # -----------------------------------------------
 # Creamos los sprites (clases) de los objetos del juego:
@@ -178,15 +191,17 @@ class Vicho(pygame.sprite.Sprite):
 
 
 class enemy(pygame.sprite.Sprite):
-    def __init__(self,imag):
+    def __init__(self,imag,_velocidad, _hp):
         self.fr=1
+        self.path=imag
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image(imag, IMG_DIR,alpha=True)
+        self.image = load_image(imag+"l1.gif", IMG_DIR,alpha=True)
         num = randint(0,1)
         self.rect = Rect(0,0,20,30)
         self.rect.centerx=SCREEN_WIDTH-50
         self.rect.centery=SCREEN_HEIGHT*num
-        self.hp = 30
+        self.velocidad = _velocidad
+        self.hp = _hp
         self.vivo = True
 
     def volanteOMaleta(self, machucao):
@@ -194,30 +209,30 @@ class enemy(pygame.sprite.Sprite):
             return True
     def mover(self, objetivo, reloj):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
-            self.image = load_image("Lover/Frames/r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            self.image = load_image(self.path+"r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx += 3.05*(reloj/30)
+            self.rect.centerx += self.velocidad*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
-            self.image = load_image("Lover/Frames/l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            self.image = load_image(self.path+"l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
-            self.rect.centerx -= 3.05*(reloj/30)
+            self.rect.centerx -= self.velocidad*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
-                self.image = load_image("Lover/Frames/d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery += 3.05*(reloj/30)
+                self.image = load_image(self.path+"d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            self.rect.centery += self.velocidad*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
-                self.image = load_image("Lover/Frames/u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            self.rect.centery -= 3.05*(reloj/30)
+                self.image = load_image(self.path+"u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            self.rect.centery -= self.velocidad*(reloj/30)
             self.fr+=1
             if self.fr>3:
                 self.fr=1
@@ -225,15 +240,22 @@ class enemy(pygame.sprite.Sprite):
 class vichoLover(enemy):
     pass
 
+class zorron(enemy):
+    def atacando(self, objetivo):
+        pass
+
 class daGame:
     def __init__(self):
         self.balas=[]
         self.ultimo = "r"
         self.lovers = []
+        self.zorrones = []
+        self.timeSpawn = 3
         self.enemies = 0
         self.tiempoActual = 0
         self.spawn = 0
-        self.eliminacion = False
+        self.eliminacionLovers = False
+        self.eliminacionZorron = False
         self.continuar = True
 
 def main():
@@ -256,8 +278,11 @@ def main():
     try:
         pygame.mixer.init()
         pygame.mixer.music.load("game.wav")
+        laBala = load_sound("Bala.wav")
+        
         pygame.mixer.music.play(-1)
         while jugador1.vivo and game.continuar:
+            
             game.tiempoActual = time.clock()
             directores = []
             leReloj = float(clock.tick(42))
@@ -297,12 +322,16 @@ def main():
                 d = list(game.ultimo)
                 jugador1.contadorBalas +=1
                 if len(directores)>0 and not("l" in directores and "r" in directores) and not("u" in directores and "d" in directores):
+                    laBala.play()
                     game.balas.append(Bala(jugador1,"Baqueta/Frames/1.gif",directores))
                 else:
+                    laBala.play()
                     game.balas.append(Bala(jugador1,"bola.png",d))
+                
+                
             if jugador1.contadorBalas>=1:
-                jugador1.contadorBalas+=1
-            if jugador1.contadorBalas>=20:
+                jugador1.contadorBalas+=leReloj
+            if jugador1.contadorBalas>=701:
                 jugador1.contadorBalas=0
                 
             jugador1.fr+=1
@@ -316,9 +345,15 @@ def main():
                 jugador1.inv = False
             
             #An enemy has been spawned
-            if game.tiempoActual - game.spawn >= 1 and game.enemies<10:
+            if game.tiempoActual - game.spawn >= game.timeSpawn and game.enemies<5:
                game.spawn = game.tiempoActual
-               game.lovers.append(vichoLover("Lover/Frames/l1.gif"))
+               numeroRandom = uniform(0,1)
+               if numeroRandom <= 0.3:
+                   game.lovers.append(vichoLover("Lover/Frames/",3,30))
+                   
+               else:
+                   game.zorrones.append(zorron("Zorron/Frames/",2,50))
+                   pass
                game.enemies += 1
         
             # actualizamos la pantalla
@@ -350,6 +385,12 @@ def main():
                         game.lovers[i].mover(jugador1,leReloj)
                         screen.blit(game.lovers[i].image,game.lovers[i].rect)
 
+            if len(game.zorrones)>0:
+                for i in range(len(game.zorrones)):
+                    if game.zorrones[i].vivo==True:
+                        game.zorrones[i].mover(jugador1,leReloj)
+                        screen.blit(game.zorrones[i].image,game.zorrones[i].rect)
+
             #Matando Vicholovers
             if len(game.lovers)>0 and len(game.balas)>0:
                 for i in range(len(game.balas)):
@@ -362,18 +403,42 @@ def main():
                                 game.lovers[j].vivo = False
                                 game.lovers[j].kill()
                                 game.enemies -= 1
-                                game.eliminacion = True
+                                game.eliminacionLovers = True
+                                jugador1.asesinatos+=1
+
+            #Matando Zorrones
+            if len(game.zorrones)>0 and len(game.balas)>0:
+                for i in range(len(game.balas)):
+                    for j in range(len(game.zorrones)):
+                        if game.balas[i].tunazo(game.zorrones[j]) and game.balas[i].mov==True:
+                            game.balas[i].mov = False
+                            game.balas[i].kill()
+                            game.zorrones[j].hp -= 10
+                            if game.zorrones[j].hp <= 0:
+                                game.zorrones[j].vivo = False
+                                game.zorrones[j].kill()
+                                game.enemies -= 1
+                                game.eliminacionZorron = True
                                 jugador1.asesinatos+=1
 
             #Eliminando las sobras
-            if len(game.lovers)>0 and game.eliminacion:
+            if len(game.lovers)>0 and game.eliminacionLovers:
                 count = 0
                 while count<len(game.lovers):
                     if game.lovers[count].vivo == False:
                         del game.lovers[count]
                     else:
                         count+=1
-                game.eliminacion = False
+                game.eliminacionLovers = False
+
+            if len(game.zorrones)>0 and game.eliminacionZorron:
+                count = 0
+                while count<len(game.zorrones):
+                    if game.zorrones[count].vivo == False:
+                        del game.zorrones[count]
+                    else:
+                        count+=1
+                game.eliminacionZorron = False
 
             #VicholoversAttack
             if len(game.lovers)>0:
@@ -382,6 +447,16 @@ def main():
                         jugador1.inv = True
                         jugador1.lastHited = game.tiempoActual
                         jugador1.dam(30)
+                        if jugador1.hp <= 0:
+                            jugador1.vivo=False
+            
+            #ZorronesPower
+            if len(game.zorrones)>0:
+                for i in range(len(game.zorrones)):
+                    if game.zorrones[i].vivo and game.zorrones[i].volanteOMaleta(jugador1) and not(jugador1.inv):
+                        jugador1.inv = True
+                        jugador1.lastHited = game.tiempoActual
+                        jugador1.dam(10)
                         if jugador1.hp <= 0:
                             jugador1.vivo=False
 
