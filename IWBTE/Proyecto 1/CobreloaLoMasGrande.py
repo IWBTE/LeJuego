@@ -236,7 +236,7 @@ class enemy(pygame.sprite.Sprite):
             self.fr+=1
             if self.fr>3:
                 self.fr=1
-#Arreglar este desastre
+
 class vichoLover(enemy):
     pass
 
@@ -247,6 +247,7 @@ class zorron(enemy):
 class daGame:
     def __init__(self):
         self.balas=[]
+        self.energeticas = []
         self.ultimo = "r"
         self.lovers = []
         self.zorrones = []
@@ -258,12 +259,49 @@ class daGame:
         self.eliminacionZorron = False
         self.continuar = True
 
+class energyDrink(pygame.sprite.Sprite):
+    def __init__(self,x,y):
+        self.time = 0
+        pygame.sprite.Sprite.__init__(self)
+        self.image = load_image("Drink.gif", IMG_DIR,alpha=True)
+        self.rect = Rect(0,0,8,20)
+        self.rect.centerx=x
+        self.rect.centery=y
+
+    def africano(self, machucao):
+        if self.rect.colliderect(machucao.rect):
+            return True
+
+
 def main():
     pygame.init()
     # creamos la ventana y le indicamos un titulo:
     screen = pygame.display.set_mode((SCREEN_WIDTH, SCREEN_HEIGHT))
     pygame.display.set_caption("VichoPLS")
+    clock = pygame.time.Clock()
+    fondo = load_image("intro.png", IMG_DIR, alpha=False)
+    
+    laBala = load_sound("Bala.wav")
 
+    pygame.mixer.music.load("game.wav")
+        
+        
+    pygame.mixer.music.play(-1)
+
+    while True:
+        leReloj = float(clock.tick(42))
+        screen.blit(fondo, (0, 0))
+        for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    game.continuar = False
+
+        if pygame.key.get_pressed()[K_k]:
+            #laBala.play()
+            pygame.mixer.stop()
+            break
+        pygame.display.flip()
+
+    
     # cargamos los objetos
     miHP = hp("hp100.png")
     fondo = load_image("fondo.png", IMG_DIR, alpha=False)
@@ -278,7 +316,7 @@ def main():
     try:
         pygame.mixer.init()
         pygame.mixer.music.load("leJuego.wav")
-        laBala = load_sound("Bala.wav")
+        
         
         pygame.mixer.music.play(-1)
         while jugador1.vivo and game.continuar:
@@ -379,6 +417,17 @@ def main():
                     else:
                         count+=1
 
+            #Eliminando energéticas
+            if len(game.energeticas)>0:
+                count = 0
+                while count<len(game.energeticas):
+                    if game.energeticas[count].time>5000:
+                        game.energeticas[count].kill()
+                        del game.energeticas[count]
+                    else:
+                        game.energeticas[count].time+=leReloj
+                        count+=1
+
             if len(game.lovers)>0:
                 for i in range(len(game.lovers)):
                     if game.lovers[i].vivo==True:
@@ -400,6 +449,9 @@ def main():
                             game.balas[i].kill()
                             game.lovers[j].hp -= 10
                             if game.lovers[j].hp <= 0:
+                                algunRandom = uniform(0,1)
+                                if algunRandom <= 0.3 and len(game.energeticas)<3:
+                                    game.energeticas.append(energyDrink(game.zorrones[j].rect.centerx,game.zorrones[j].rect.centery))
                                 game.lovers[j].vivo = False
                                 game.lovers[j].kill()
                                 game.enemies -= 1
@@ -415,11 +467,32 @@ def main():
                             game.balas[i].kill()
                             game.zorrones[j].hp -= 10
                             if game.zorrones[j].hp <= 0:
+                                algunRandom = uniform(0,1)
+                                if algunRandom <= 0.3 and len(game.energeticas)<3:
+                                    game.energeticas.append(energyDrink(game.zorrones[j].rect.centerx,game.zorrones[j].rect.centery))
                                 game.zorrones[j].vivo = False
                                 game.zorrones[j].kill()
                                 game.enemies -= 1
                                 game.eliminacionZorron = True
                                 jugador1.asesinatos+=1
+
+            #Tomando energetica
+            if len(game.energeticas)>0:
+                count = 0
+                while count < (len(game.energeticas)):
+                    if game.energeticas[count].africano(jugador1):
+                        jugador1.hp=100
+                        game.energeticas[count].kill()
+                        del game.energeticas[count]
+                    else:
+                        count += 1
+
+
+            
+                
+            
+            for energetica in game.energeticas:
+                screen.blit(energetica.image,energetica.rect)
 
             #Eliminando las sobras
             if len(game.lovers)>0 and game.eliminacionLovers:
