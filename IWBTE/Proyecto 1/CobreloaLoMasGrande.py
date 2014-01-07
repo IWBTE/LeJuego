@@ -207,35 +207,63 @@ class enemy(pygame.sprite.Sprite):
     def volanteOMaleta(self, machucao):
         if self.rect.colliderect(machucao.rect) and machucao.inv == False:
             return True
-    def mover(self, objetivo, reloj):
+    def mover(self, objetivo, reloj, juego):
         if objetivo.rect.centerx - self.rect.centerx >= 0:
             self.image = load_image(self.path+"r"+str(self.fr)+".gif",IMG_DIR,alpha=False)
             
+            respaldo = self.rect.centerx
             self.rect.centerx += self.velocidad*(reloj/30)
+
+            if self.hustonTenemosProblemas(juego):
+                self.rect.centerx = respaldo
+
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             self.image = load_image(self.path+"l"+str(self.fr)+".gif",IMG_DIR,alpha=False)
-            
+            respaldo = self.rect.centerx
             self.rect.centerx -= self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(juego):
+                self.rect.centerx = respaldo
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
                 self.image = load_image(self.path+"d"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+
+            respaldo = self.rect.centery
+
             self.rect.centery += self.velocidad*(reloj/30)
+
+            if self.hustonTenemosProblemas(juego):
+                self.rect.centery = respaldo
+
             self.fr+=1
             if self.fr>3:
                 self.fr=1
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
                 self.image = load_image(self.path+"u"+str(self.fr)+".gif",IMG_DIR,alpha=False)
+            respaldo = self.rect.centery
             self.rect.centery -= self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(juego):
+                self.rect.centery = respaldo
             self.fr+=1
             if self.fr>3:
                 self.fr=1
+
+    def hustonTenemosProblemas(self, elJuego):
+        for i in elJuego.lovers:
+            if self.rect.colliderect(i.rect) and not(self.rect is i.rect):
+                return True
+        for j in elJuego.zorrones:
+            if self.rect.colliderect(j.rect) and not(self.rect is j.rect):
+                return True
+        return False
+    
+    
 
 class vichoLover(enemy):
     pass
@@ -417,7 +445,7 @@ def main():
                     else:
                         count+=1
 
-            #Eliminando energéticas
+            #Eliminando energeticas
             if len(game.energeticas)>0:
                 count = 0
                 while count<len(game.energeticas):
@@ -430,14 +458,14 @@ def main():
 
             if len(game.lovers)>0:
                 for i in range(len(game.lovers)):
-                    if game.lovers[i].vivo==True:
-                        game.lovers[i].mover(jugador1,leReloj)
+                    if game.lovers[i].vivo==True:                        
+                        game.lovers[i].mover(jugador1,leReloj,game)
                         screen.blit(game.lovers[i].image,game.lovers[i].rect)
 
             if len(game.zorrones)>0:
                 for i in range(len(game.zorrones)):
-                    if game.zorrones[i].vivo==True:
-                        game.zorrones[i].mover(jugador1,leReloj)
+                    if game.zorrones[i].vivo==True:                        
+                        game.zorrones[i].mover(jugador1,leReloj,game)
                         screen.blit(game.zorrones[i].image,game.zorrones[i].rect)
 
             #Matando Vicholovers
@@ -451,7 +479,7 @@ def main():
                             if game.lovers[j].hp <= 0:
                                 algunRandom = uniform(0,1)
                                 if algunRandom <= 0.3 and len(game.energeticas)<3:
-                                    game.energeticas.append(energyDrink(game.zorrones[j].rect.centerx,game.zorrones[j].rect.centery))
+                                    game.energeticas.append(energyDrink(game.lovers[j].rect.centerx,game.lovers[j].rect.centery))
                                 game.lovers[j].vivo = False
                                 game.lovers[j].kill()
                                 game.enemies -= 1
