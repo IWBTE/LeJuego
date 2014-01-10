@@ -158,8 +158,8 @@ class hp(pygame.sprite.Sprite):
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image(imag, IMG_DIR, alpha = True)
         self.rect = self.image.get_rect()
-        self.rect.centerx=85
-        self.rect.centery=15
+        self.rect.centerx=115
+        self.rect.centery=20
                               
 class Vicho(pygame.sprite.Sprite):
 
@@ -382,7 +382,7 @@ def main():
 
     
     # cargamos los objetos
-    miHP = hp("hp100.png")
+    miHP = hp("Barra HP/h100.gif")
     fondo = load_image("fondo.png", IMG_DIR, alpha=False)
     jugador1 = Vicho(40,"Vicho/Frames/r1.gif")
     #jugador2 = Vicho(SCREEN_WIDTH-40,"cc.bmp")
@@ -655,7 +655,7 @@ def main():
                 daHP=0
             if daHP>100:
                 daHP=100
-            daHP2 = "hp"+str(daHP)+".png"
+            daHP2 = "Barra HP/h"+str(daHP)+".gif"
             miHP.image = load_image(daHP2,IMG_DIR,alpha=True)
             screen.blit(miHP.image,miHP.rect)
 
