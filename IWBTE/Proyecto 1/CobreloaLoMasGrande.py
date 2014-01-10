@@ -194,6 +194,7 @@ class enemy(pygame.sprite.Sprite):
     def __init__(self,imag,_velocidad, _hp):
         self.fr=1
         self.path=imag
+        self.corazones=0
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image(imag+"l1.gif", IMG_DIR,alpha=True)
         num = randint(0,1)
@@ -266,11 +267,55 @@ class enemy(pygame.sprite.Sprite):
     
 
 class vichoLover(enemy):
-    pass
-
-class zorron(enemy):
+    
     def atacando(self, objetivo):
         pass
+
+class heart(pygame.sprite.Sprite):
+    def __init__(self,objetivo,posx,posy):
+        pygame.sprite.Sprite.__init__(self)
+        self.fr = 1
+        self.objetivo = objetivo
+        self.image = load_image("Corazon/c"+str(self.fr)+".gif", IMG_DIR, alpha=True)
+        self.rect = Rect(0,0,10,20)
+        self.rect.centerx = posx
+        self.rect.centery = posy
+        self.count = 0
+        self.mov = True
+
+    def mover(self, reloj):
+        self.fr += 1
+        if self.fr >2:
+            self.fr = 1
+        self.image = load_image("Corazon/c"+str(self.fr)+".gif", IMG_DIR, alpha=True)
+
+        if self.objetivo.rect.centerx > self.rect.centerx:
+            self.rect.centerx = self.rect.centerx + 3.4*(reloj/30)
+            self.count+=3.4*(reloj/30)
+
+        elif self.objetivo.rect.centerx < self.rect.centerx:
+            self.rect.centerx = self.rect.centerx - 3.4*(reloj/30)
+            self.count+=3.4*(reloj/30)
+
+        if self.objetivo.rect.centery > self.rect.centery:
+            self.rect.centery = self.rect.centery + 3.4*(reloj/30)
+            self.count+=3.4*(reloj/30)
+
+        elif self.objetivo.rect.centery < self.rect.centery:
+            self.rect.centery = self.rect.centery - 3.4*(reloj/30)
+            self.count+=3.4*(reloj/30)
+
+        if self.count>260:
+            self.kill()
+            self.mov = False
+    def colision(self):
+        if self.rect.colliderect(self.objetivo.rect):
+            return True
+        
+
+
+class zorron(enemy):
+    pass
 
 class daGame:
     def __init__(self):
@@ -279,6 +324,7 @@ class daGame:
         self.ultimo = "r"
         self.lovers = []
         self.zorrones = []
+        self.corazones = []
         self.timeSpawn = 3
         self.enemies = 0
         self.tiempoActual = 0
@@ -286,6 +332,9 @@ class daGame:
         self.eliminacionLovers = False
         self.eliminacionZorron = False
         self.continuar = True
+        self.dandole = True
+        self.cantidad = 5
+        self.etapa = 1
 
 class energyDrink(pygame.sprite.Sprite):
     def __init__(self,x,y):
@@ -411,14 +460,14 @@ def main():
                 jugador1.inv = False
             
             #An enemy has been spawned
-            if game.tiempoActual - game.spawn >= game.timeSpawn and game.enemies<5:
+            if game.tiempoActual - game.spawn >= game.timeSpawn and game.enemies<game.cantidad and game.dandole:
                game.spawn = game.tiempoActual
                numeroRandom = uniform(0,1)
                if numeroRandom <= 0.3:
-                   game.lovers.append(vichoLover("Lover/Frames/",3,30))
+                   game.lovers.append(vichoLover("Lover/Frames/",2,30))
                    
                else:
-                   game.zorrones.append(zorron("Zorron/Frames/",2,50))
+                   game.zorrones.append(zorron("Zorron/Frames/",2.2,50))
                    pass
                game.enemies += 1
         
@@ -436,12 +485,28 @@ def main():
                     if game.balas[i].mov:
                         screen.blit(game.balas[i].image,game.balas[i].rect)
 
+            if len(game.corazones)>0:
+                for i in range(len(game.corazones)):
+                    game.corazones[i].mover(leReloj)
+                    if game.corazones[i].mov:
+                        screen.blit(game.corazones[i].image,game.corazones[i].rect)
+
+
             #Eliminando balas perdidas
             if len(game.balas)>0:
                 count = 0
                 while count<len(game.balas):
                     if game.balas[count].mov == False:
                         del game.balas[count]
+                    else:
+                        count+=1
+
+            #Eliminando corazones
+            if len(game.corazones)>0:
+                count = 0
+                while count<len(game.corazones):
+                    if game.corazones[count].mov == False:
+                        del game.corazones[count]
                     else:
                         count+=1
 
@@ -456,17 +521,28 @@ def main():
                         game.energeticas[count].time+=leReloj
                         count+=1
 
+            #Mover Lovers
             if len(game.lovers)>0:
                 for i in range(len(game.lovers)):
                     if game.lovers[i].vivo==True:                        
                         game.lovers[i].mover(jugador1,leReloj,game)
                         screen.blit(game.lovers[i].image,game.lovers[i].rect)
+                        num = uniform(0,1)
+                        if num<0.35 and game.lovers[i].corazones==0:
+                            game.corazones.append(heart(jugador1,game.lovers[i].rect.centerx,game.lovers[i].rect.centery))
+                            game.lovers[i].corazones=1
+                        else:
+                            game.lovers[i].corazones+=leReloj
+                            if game.lovers[i].corazones>=1000:
+                                game.lovers[i].corazones = 0
 
             if len(game.zorrones)>0:
                 for i in range(len(game.zorrones)):
                     if game.zorrones[i].vivo==True:                        
                         game.zorrones[i].mover(jugador1,leReloj,game)
                         screen.blit(game.zorrones[i].image,game.zorrones[i].rect)
+
+            
 
             #Matando Vicholovers
             if len(game.lovers)>0 and len(game.balas)>0:
@@ -547,9 +623,18 @@ def main():
                     if game.lovers[i].vivo and game.lovers[i].volanteOMaleta(jugador1) and not(jugador1.inv):
                         jugador1.inv = True
                         jugador1.lastHited = game.tiempoActual
-                        jugador1.dam(30)
+                        jugador1.dam(10)
                         if jugador1.hp <= 0:
                             jugador1.vivo=False
+
+            if len(game.corazones)>0:
+                for corazon in game.corazones:
+                    if corazon.colision() and corazon.mov and not(jugador1.inv):
+                        jugador1.inv = True
+                        jugador1.lastHited = game.tiempoActual
+                        jugador1.dam(30)
+                if jugador1.hp <= 0:
+                    jugador1.vivo=False
             
             #ZorronesPower
             if len(game.zorrones)>0:
