@@ -7,7 +7,6 @@ from random import randint
 from threading import Timer
 import time
 from math import floor
-import StartBase
 
 # -----------
 # Constantes
@@ -22,12 +21,6 @@ IMG_DIR = "imagenes"
 # ------------------------------
 
 
-#--------------------------------------------------------------
-# Modulo heredado de StartBase requerido para iniciar el juego
-#--------------------------------------------------------------
-class MiJuego(StartBase.Start):
-    def Go(self,services):
-        main()
 
 
 def load_image(nombre, dir_imagen, alpha=False):
