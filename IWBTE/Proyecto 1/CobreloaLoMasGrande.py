@@ -167,7 +167,7 @@ class Vicho(pygame.sprite.Sprite):
         self.asesinatos = 0
         self.hp = 100
         self.image = load_image(imag, IMG_DIR, alpha=True)
-        self.rect = Rect(0,0,10,15)
+        self.rect = Rect(0,0,10,20)
         self.rect.centerx = x
         self.rect.centery = (SCREEN_HEIGHT / 2)
         self.contadorBalas = 0
@@ -292,7 +292,7 @@ class energyDrink(pygame.sprite.Sprite):
         self.time = 0
         pygame.sprite.Sprite.__init__(self)
         self.image = load_image("Drink.gif", IMG_DIR,alpha=True)
-        self.rect = Rect(0,0,8,20)
+        self.rect = Rect(0,0,20,30)
         self.rect.centerx=x
         self.rect.centery=y
 
