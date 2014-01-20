@@ -9,7 +9,7 @@ from math import floor
 
 #Mis modulos
 from Menu import Menu
-#from Etapa import Etapa
+from Etapa import Etapa
 
 #Constantes
 

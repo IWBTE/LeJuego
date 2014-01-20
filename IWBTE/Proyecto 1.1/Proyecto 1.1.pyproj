@@ -1,0 +1,116 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{d980fe03-6059-411b-abbf-785cbff78f82}</ProjectGuid>
+    <ProjectHome />
+    <StartupFile>Main.py</StartupFile>
+    <SearchPath />
+    <WorkingDirectory>.</WorkingDirectory>
+    <OutputPath>.</OutputPath>
+    <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+    <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+  <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+  <ItemGroup>
+    <Content Include="Readme!.txt" />
+    <Compile Include="Bala.py" />
+    <Compile Include="Enemy.py" />
+    <Compile Include="EnergyDrink.py" />
+    <Compile Include="Etapa.py" />
+    <Compile Include="Heart.py" />
+    <Compile Include="HP.py" />
+    <Compile Include="Main.py" />
+    <Compile Include="Menu.py" />
+    <Compile Include="Personaje.py" />
+    <Content Include="imagenes\bola.png" />
+    <Content Include="imagenes\fondo.png" />
+    <Content Include="imagenes\Intro.png" />
+    <Content Include="imagenes\laser.png" />
+    <Content Include="imagenes\perrin.jpg" />
+    <Content Include="imagenes\benedictus.gif" />
+    <Content Include="imagenes\Drink.gif" />
+    <Content Include="imagenes\pela.gif" />
+    <Content Include="imagenes\plox.gif" />
+    <Content Include="imagenes\plox2.gif" />
+    <Content Include="imagenes\cc.bmp" />
+    <Content Include="imagenes\cob.bmp" />
+    <Content Include="imagenes\Baqueta\baqueta.bmp" />
+    <Content Include="imagenes\Barra HP\h0.gif" />
+    <Content Include="imagenes\Barra HP\h10.gif" />
+    <Content Include="imagenes\Barra HP\h100.gif" />
+    <Content Include="imagenes\Barra HP\h20.gif" />
+    <Content Include="imagenes\Barra HP\h30.gif" />
+    <Content Include="imagenes\Barra HP\h40.gif" />
+    <Content Include="imagenes\Barra HP\h50.gif" />
+    <Content Include="imagenes\Barra HP\h60.gif" />
+    <Content Include="imagenes\Barra HP\h70.gif" />
+    <Content Include="imagenes\Barra HP\h80.gif" />
+    <Content Include="imagenes\Barra HP\h90.gif" />
+    <Content Include="imagenes\Corazon\c1.gif" />
+    <Content Include="imagenes\Corazon\c2.gif" />
+    <Content Include="imagenes\Lover\lover.bmp" />
+    <Content Include="imagenes\Vicho\vicho.bmp" />
+    <Content Include="imagenes\Baqueta\Frames\1.gif" />
+    <Content Include="imagenes\Baqueta\Frames\2.gif" />
+    <Content Include="imagenes\Baqueta\Frames\3.gif" />
+    <Content Include="imagenes\Baqueta\Frames\4.gif" />
+    <Content Include="imagenes\Baqueta\Frames\5.gif" />
+    <Content Include="imagenes\Baqueta\Frames\6.gif" />
+    <Content Include="imagenes\Baqueta\Frames\7.gif" />
+    <Content Include="imagenes\Baqueta\Frames\8.gif" />
+    <Content Include="imagenes\Lover\Frames\d1.gif" />
+    <Content Include="imagenes\Lover\Frames\d2.gif" />
+    <Content Include="imagenes\Lover\Frames\d3.gif" />
+    <Content Include="imagenes\Lover\Frames\l1.gif" />
+    <Content Include="imagenes\Lover\Frames\l2.gif" />
+    <Content Include="imagenes\Lover\Frames\l3.gif" />
+    <Content Include="imagenes\Lover\Frames\r1.gif" />
+    <Content Include="imagenes\Lover\Frames\r2.gif" />
+    <Content Include="imagenes\Lover\Frames\r3.gif" />
+    <Content Include="imagenes\Lover\Frames\u1.gif" />
+    <Content Include="imagenes\Lover\Frames\u2.gif" />
+    <Content Include="imagenes\Lover\Frames\u3.gif" />
+    <Content Include="imagenes\Vicho\Frames\All.gif" />
+    <Content Include="imagenes\Vicho\Frames\d1.gif" />
+    <Content Include="imagenes\Vicho\Frames\d2.gif" />
+    <Content Include="imagenes\Vicho\Frames\d3.gif" />
+    <Content Include="imagenes\Vicho\Frames\l1.gif" />
+    <Content Include="imagenes\Vicho\Frames\l2.gif" />
+    <Content Include="imagenes\Vicho\Frames\l3.gif" />
+    <Content Include="imagenes\Vicho\Frames\r1.gif" />
+    <Content Include="imagenes\Vicho\Frames\r2.gif" />
+    <Content Include="imagenes\Vicho\Frames\r3.gif" />
+    <Content Include="imagenes\Vicho\Frames\u1.gif" />
+    <Content Include="imagenes\Vicho\Frames\u2.gif" />
+    <Content Include="imagenes\Vicho\Frames\u3.gif" />
+    <Content Include="imagenes\Zorron\Frames\d1.gif" />
+    <Content Include="imagenes\Zorron\Frames\d2.gif" />
+    <Content Include="imagenes\Zorron\Frames\d3.gif" />
+    <Content Include="imagenes\Zorron\Frames\l1.gif" />
+    <Content Include="imagenes\Zorron\Frames\l2.gif" />
+    <Content Include="imagenes\Zorron\Frames\l3.gif" />
+    <Content Include="imagenes\Zorron\Frames\r1.gif" />
+    <Content Include="imagenes\Zorron\Frames\r2.gif" />
+    <Content Include="imagenes\Zorron\Frames\r3.gif" />
+    <Content Include="imagenes\Zorron\Frames\u1.gif" />
+    <Content Include="imagenes\Zorron\Frames\u2.gif" />
+    <Content Include="imagenes\Zorron\Frames\u3.gif" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="imagenes" />
+    <Folder Include="imagenes\Baqueta" />
+    <Folder Include="imagenes\Baqueta\Frames" />
+    <Folder Include="imagenes\Barra HP" />
+    <Folder Include="imagenes\Corazon" />
+    <Folder Include="imagenes\Lover" />
+    <Folder Include="imagenes\Lover\Frames" />
+    <Folder Include="imagenes\Vicho" />
+    <Folder Include="imagenes\Vicho\Frames" />
+    <Folder Include="imagenes\Zorron\" />
+    <Folder Include="imagenes\Zorron\Frames" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

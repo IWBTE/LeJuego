@@ -34,14 +34,15 @@ class Enemy(pygame.sprite.Sprite):
 
     def mover(self, objetivo, reloj, etapa):
         #Forgive me for this sin...
+        a = self.frameActual//3 + 1
         if objetivo.rect.centerx - self.rect.centerx >= 0:
-            self.image = self.loadImage(self.path+"r"+str(self.frameActual)+".gif","imagenes",alpha=False)            
+            self.image = self.loadImage(self.path+"r"+str(a)+".gif","imagenes",alpha=False)            
             respaldo = self.rect.centerx
             self.rect.centerx += self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
                 self.rect.centerx = respaldo
         else:
-            self.image = self.loadImage(self.path+"l"+str(self.frameActual)+".gif","imagenes",alpha=False)            
+            self.image = self.loadImage(self.path+"l"+str(a)+".gif","imagenes",alpha=False)            
             respaldo = self.rect.centerx
             self.rect.centerx -= self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
@@ -49,14 +50,14 @@ class Enemy(pygame.sprite.Sprite):
 
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
-                self.image = self.loadImage(self.path+"d"+str(self.frameActual)+".gif","imagenes",alpha=False)
+                self.image = self.loadImage(self.path+"d"+str(a)+".gif","imagenes",alpha=False)
             respaldo = self.rect.centery
             self.rect.centery += self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
                 self.rect.centery = respaldo
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
-                self.image = self.loadImage(self.path+"u"+str(self.frameActual)+".gif","imagenes",alpha=False)
+                self.image = self.loadImage(self.path+"u"+str(a)+".gif","imagenes",alpha=False)
             respaldo = self.rect.centery
             self.rect.centery -= self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
@@ -64,7 +65,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def cambiarFrame(self):
         self.frameActual+=1
-        if self.frameActual>3:
+        if self.frameActual>8:
             self.frameActual=1
 
 
