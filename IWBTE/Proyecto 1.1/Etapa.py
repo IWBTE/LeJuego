@@ -32,15 +32,18 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
         self.screen = _screen
+        self.continuar = True
+        self.probabilidadEnergetica = _probabilidadEnergetica
         self.ultimo = ""
         self.directores = []
         self.enemies = 0
-        self.spawnTime = 3000
+        self.spawnTime = _spawnTime
+        self.maxEnemies = _maxEnemies
         self.lastSpawn = 0
 
         self.balas = []
@@ -94,7 +97,7 @@ class Etapa:
 
 
     def spawnEnemy(self,tiempo):
-        if self.lastSpawn>=self.spawnTime and self.enemies<6:
+        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies:
             num = uniform(0,1)
             if num<=0.7:
                 self.zorrones.append(Zorron(self.cargaImagen))
@@ -206,7 +209,7 @@ class Etapa:
     
     def spawnearEnergetica(self, posx, posy):
         a = uniform(0,1)
-        if a <= 0.7:
+        if a <= self.probabilidadEnergetica:
             self.energeticas.append(EnergyDrink(posx,posy,self.cargaImagen))
 
     def tomarEnergetica(self, jugador):
@@ -252,6 +255,10 @@ class Etapa:
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
 
+    def continuar(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.continuar = False
 
     def ejecutarEtapa(self, cancion):
 
@@ -260,7 +267,7 @@ class Etapa:
         Vicho = Personaje(self.cargaImagen)
         miHP = HP(self.cargaImagen) 
 
-        while True:
+        while self.continuar:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()

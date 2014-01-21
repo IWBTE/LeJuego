@@ -38,6 +38,7 @@ class Corazon(pygame.sprite.Sprite):
         if self.rect.colliderect(baleado.rect):
             self.kill()
             self.mov = False
+            baleado.invencible = True
             return True
 
     def cambiarFrame(self):

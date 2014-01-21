@@ -10,6 +10,7 @@ from math import floor
 #Mis modulos
 from Menu import Menu
 from Etapa import Etapa
+from GameOver import GameOver
 
 #Constantes
 
@@ -51,16 +52,22 @@ def main():
     clock = pygame.time.Clock()
 
     #Ejecutamos el Menu
+    continuar = True
+    while continuar:
 
-    miMenu = Menu(load_image,clock,screen)
-    miMenu.ejecutarMenu()
+        miMenu = Menu(load_image,clock,screen)
+        miMenu.ejecutarMenu()
 
-    #Ejecutamos la Etapa
+        #Ejecutamos la Etapa
 
-    miEtapa = Etapa(load_image,clock,screen)
-    miEtapa.ejecutarEtapa("leJuego")
+        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6)
+        miEtapa.ejecutarEtapa("leJuego")
+
+        miGO = GameOver(load_image,clock,screen)
+        continuar = miGO.ejecutarMenu()
 
     pygame.mixer.quit()
+    pygame.display.quit()
     print "GG"
 
 if __name__ == "__main__":
