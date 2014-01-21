@@ -51,7 +51,7 @@ class Etapa:
         self.laBala = load_sound("Bala.wav")
 
     def keyboard(self,hero,reloj):
-        """Controla el input del teclado"""  
+        """Controla el input del teclado"""
         if pygame.key.get_pressed()[K_UP]:
             hero.moverArriba(reloj)
             hero.actualizarFrame("u")
@@ -77,7 +77,6 @@ class Etapa:
                 self.directores.append("r")
             self.ultimo = "r"
         if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
-            print self.directores
             d = self.ultimo
             hero.retrasoBalas=1
             if len(self.directores)>0 and not("l" in self.directores and "r" in self.directores) and not("u" in self.directores and "d" in self.directores):
@@ -201,8 +200,7 @@ class Etapa:
         while True:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
-            pygame.event.get() 
-            
+            pygame.event.get()
             self.directores = []          
             self.keyboard(Vicho,tiempo)
 
