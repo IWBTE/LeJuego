@@ -77,6 +77,7 @@ class Etapa:
                 self.directores.append("r")
             self.ultimo = "r"
         if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
+            print self.directores
             d = self.ultimo
             hero.retrasoBalas=1
             if len(self.directores)>0 and not("l" in self.directores and "r" in self.directores) and not("u" in self.directores and "d" in self.directores):
