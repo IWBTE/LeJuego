@@ -7,6 +7,8 @@ from random import randint
 import time
 from math import floor
 
+from Corazon import Corazon
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, _loadImage):
         pygame.sprite.Sprite.__init__(self)
@@ -76,3 +78,26 @@ class Zorron(Enemy):
         self.path = "Zorron/Frames/"
         self.velocidad = 2.3
         self.hp = 50
+
+class Lover(Enemy):
+    def __init__(self,_loadImage):
+        Enemy.__init__(self,_loadImage)
+        self.image = self.loadImage("Lover/Frames/l1.gif","imagenes",alpha=True)
+        self.path= "Lover/Frames/"
+        self.velocidad = 2
+        self.hp = 30
+        self.delayHeart = 0
+
+    def enamorar(self,objetivo,tiempo,etapa):
+        self.mover(objetivo,tiempo,etapa)
+        a = uniform(0,1)
+        if a<=0.3 and self.delayHeart == 0:
+            a = Corazon(self.rect.centerx,self.rect.centery,self.loadImage)
+            etapa.heart.append(a)
+            self.delayHeart=1
+        if self.delayHeart>0:
+            self.delayHeart += tiempo
+        if self.delayHeart>=3001:
+            self.delayHeart = 0
+
+

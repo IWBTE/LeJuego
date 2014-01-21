@@ -11,6 +11,8 @@ from Personaje import Personaje
 
 from Bala import Bala
 from Enemy import Zorron
+from Enemy import Lover
+from Corazon import Corazon
 from HP import HP
 from EnergyDrink import EnergyDrink
 
@@ -42,6 +44,7 @@ class Etapa:
         self.lastSpawn = 0
 
         self.balas = []
+        self.heart = []
         self.energeticas = []
         self.corazones = []
         
@@ -92,7 +95,11 @@ class Etapa:
 
     def spawnEnemy(self,tiempo):
         if self.lastSpawn>=self.spawnTime and self.enemies<6:
-            self.zorrones.append(Zorron(self.cargaImagen))
+            num = uniform(0,1)
+            if num<=0.7:
+                self.zorrones.append(Zorron(self.cargaImagen))
+            else:
+                self.lovers.append(Lover(self.cargaImagen))    
             self.enemies += 1
             self.lastSpawn = 0
         else:
@@ -105,6 +112,14 @@ class Etapa:
                 self.balas[i].cambiarFrame()
                 if self.balas[i].mov:
                     (self.screen).blit(self.balas[i].image,self.balas[i].rect) 
+
+    def moverCorazones(self,leReloj,jugador):
+        if len(self.heart)>0:
+            for i in range(len(self.heart)):
+                self.heart[i].mover(leReloj,jugador)
+                self.heart[i].cambiarFrame()
+                if self.heart[i].mov:
+                    (self.screen).blit(self.heart[i].image,self.heart[i].rect) 
                     
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -112,7 +127,15 @@ class Etapa:
                 self.zorrones[i].mover(jugador,leReloj,self)
                 self.zorrones[i].cambiarFrame()
                 if self.zorrones[i].vivo:                
-                    (self.screen).blit(self.zorrones[i].image,self.zorrones[i].rect) 
+                    (self.screen).blit(self.zorrones[i].image,self.zorrones[i].rect)
+
+    def moverLovers(self,leReloj,jugador):
+        if len(self.lovers)>0:
+            for i in range(len(self.lovers)):
+                self.lovers[i].enamorar(jugador,leReloj,self)
+                self.lovers[i].cambiarFrame()
+                if self.lovers[i].vivo:
+                    (self.screen).blit(self.lovers[i].image,self.lovers[i].rect)
     
     def balacera(self):
         for i in (self.balas):
@@ -120,6 +143,17 @@ class Etapa:
                 for j in range(len(self.zorrones)):
                     if i.tunazo(self.zorrones[j]):
                         self.zorrones[j].hp -= 10
+        
+            if len(self.lovers)>0:
+                for k in range(len(self.lovers)):
+                    if i.tunazo(self.lovers[k]):
+                        self.lovers[k].hp -= 10
+
+    def enamoramiento(self,jugador):
+        if len(self.heart)>0:
+            for i in (self.heart):
+                if i.flechazo(jugador):
+                    jugador.hp-=30
                               
 
     def eliminarBalas(self):
@@ -130,6 +164,15 @@ class Etapa:
                     del self.balas[count]
                 else:
                     count+=1
+
+    def eliminarCorazones(self):
+        if len(self.heart)>0:
+            count = 0
+            while count < len(self.heart):
+                if self.heart[count].mov == False:
+                    del self.heart[count]
+                else:
+                    count +=1
 
     def eliminarZorrones(self):
         if len(self.zorrones)>0:
@@ -142,6 +185,21 @@ class Etapa:
                     self.spawnearEnergetica(posx,posy)
                     self.zorrones[count].kill()
                     del self.zorrones[count]
+                    self.enemies-=1
+                else:
+                    count+=1
+
+    def eliminarLovers(self):
+        if len(self.lovers)>0:
+            count = 0
+            while count < len(self.lovers):
+                if self.lovers[count].hp<=0:
+                    self.lovers[count].vivo = False
+                    posx = self.lovers[count].rect.centerx
+                    posy = self.lovers[count].rect.centery
+                    self.spawnearEnergetica(posx,posy)
+                    self.lovers[count].kill()
+                    del self.lovers[count]
                     self.enemies-=1
                 else:
                     count+=1
@@ -185,6 +243,11 @@ class Etapa:
                 if i.colisionConPersonaje(jugador):
                     jugador.hp-=10
 
+        if len(self.lovers)>0:
+            for i in self.lovers:
+                if i.colisionConPersonaje(jugador):
+                    jugador.hp-=10
+
     def actualizarHP(self,HP,jugador):
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
@@ -208,17 +271,25 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.spawnEnemy(tiempo)
+
             self.moverZorrones(tiempo,Vicho)
+            self.moverLovers(tiempo,Vicho)
 
             self.moverBalas(tiempo)
+            self.moverCorazones(tiempo,Vicho)
+            
             self.balacera()
+            self.enamoramiento(Vicho)
             self.eliminarZorrones()
+            self.eliminarLovers()
 
             self.energyPack(Vicho,tiempo)
 
             self.danarPersonaje(Vicho)
 
             self.eliminarBalas()
+            self.eliminarCorazones()
+
             Vicho.poderDisparar(tiempo)
 
             self.actualizarHP(miHP,Vicho)
