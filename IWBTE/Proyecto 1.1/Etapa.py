@@ -15,6 +15,7 @@ from Enemy import Lover
 from Corazon import Corazon
 from HP import HP
 from EnergyDrink import EnergyDrink
+from Keyboard import keyboard
 
 
 class dummysound:
@@ -46,6 +47,8 @@ class Etapa:
         self.maxEnemies = _maxEnemies
         self.lastSpawn = 0
 
+        self.killed = 0
+
         self.balas = []
         self.heart = []
         self.energeticas = []
@@ -55,46 +58,6 @@ class Etapa:
         self.zorrones = []
 
         self.laBala = load_sound("Bala.wav")
-
-    def keyboard(self,hero,reloj):
-        """Controla el input del teclado"""
-        if pygame.key.get_pressed()[K_UP]:
-            hero.moverArriba(reloj)
-            hero.actualizarFrame("u")
-            if not("u" in self.directores):
-                self.directores.append("u")
-            self.ultimo = "u"
-        if pygame.key.get_pressed()[K_DOWN]:
-            hero.moverAbajo(reloj)
-            hero.actualizarFrame("d")
-            if not("d" in self.directores):
-                self.directores.append("d")
-            self.ultimo = "d"
-        if pygame.key.get_pressed()[K_LEFT]:
-            hero.moverIzquierda(reloj)
-            hero.actualizarFrame("l")
-            if not("l" in self.directores):
-                self.directores.append("l")
-            self.ultimo = "l"
-        if pygame.key.get_pressed()[K_RIGHT]:
-            hero.moverDerecha(reloj)
-            hero.actualizarFrame("r")
-            if not("r" in self.directores):
-                self.directores.append("r")
-            self.ultimo = "r"
-        if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
-            d = self.ultimo
-            hero.retrasoBalas=1
-            if len(self.directores)>0 and not("l" in self.directores and "r" in self.directores) and not("u" in self.directores and "d" in self.directores):
-                dire = ""
-                for letra in self.directores:
-                    dire = dire+letra
-                self.laBala.play()
-                self.balas.append(Bala(hero,dire))
-            else:
-                self.laBala.play()
-                self.balas.append(Bala(hero,d))
-
 
     def spawnEnemy(self,tiempo):
         if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies:
@@ -189,6 +152,7 @@ class Etapa:
                     self.zorrones[count].kill()
                     del self.zorrones[count]
                     self.enemies-=1
+                    self.killed += 1
                 else:
                     count+=1
 
@@ -204,6 +168,7 @@ class Etapa:
                     self.lovers[count].kill()
                     del self.lovers[count]
                     self.enemies-=1
+                    self.killed += 1
                 else:
                     count+=1
     
@@ -266,13 +231,13 @@ class Etapa:
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen)
         miHP = HP(self.cargaImagen) 
-
-        while self.continuar:
+        
+        while self.continuar and self.killed<=25:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()
             self.directores = []          
-            self.keyboard(Vicho,tiempo)
+            keyboard(Vicho,tiempo,self)
 
             Vicho.margen()
             (self.screen).blit(Vicho.image, Vicho.rect)
@@ -283,7 +248,7 @@ class Etapa:
             self.moverLovers(tiempo,Vicho)
 
             self.moverBalas(tiempo)
-            self.moverCorazones(tiempo,Vicho)
+            self.moverCorazones(tiempo,Vicho)            
             
             self.balacera()
             self.enamoramiento(Vicho)

@@ -35,7 +35,7 @@ class Corazon(pygame.sprite.Sprite):
         self.mov = True
 
     def flechazo(self, baleado):
-        if self.rect.colliderect(baleado.rect):
+        if self.rect.colliderect(baleado.rect) and not(baleado.invencible):
             self.kill()
             self.mov = False
             baleado.invencible = True

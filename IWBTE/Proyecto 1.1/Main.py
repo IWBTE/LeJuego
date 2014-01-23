@@ -53,10 +53,11 @@ def main():
 
     #Ejecutamos el Menu
     continuar = True
-    while continuar:
+    
 
-        miMenu = Menu(load_image,clock,screen)
-        miMenu.ejecutarMenu()
+    miMenu = Menu(load_image,clock,screen)
+    miMenu.ejecutarMenu()
+    while continuar:
 
         #Ejecutamos la Etapa
 
