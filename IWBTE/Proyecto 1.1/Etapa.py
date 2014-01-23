@@ -40,8 +40,7 @@ class Etapa:
         self.screen = _screen
         self.continuar = True
         self.probabilidadEnergetica = _probabilidadEnergetica
-        self.ultimo = ""
-        self.directores = []
+        
         self.enemies = 0
         self.spawnTime = _spawnTime
         self.maxEnemies = _maxEnemies
@@ -235,8 +234,8 @@ class Etapa:
         while self.continuar and self.killed<=25:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
-            pygame.event.get()
-            self.directores = []          
+            pygame.event.get()     
+            Vicho.directores = []   
             keyboard(Vicho,tiempo,self)
 
             Vicho.margen()

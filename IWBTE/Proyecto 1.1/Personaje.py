@@ -23,6 +23,9 @@ class Personaje(pygame.sprite.Sprite):
         self.ultimoHit = 0
         self.vivo = True
 
+        self.ultimo = ""
+        self.directores = []
+
     def margen(self):
         """Controla que el PJ no se salga"""
         if self.rect.bottom >= 470:

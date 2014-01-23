@@ -23,6 +23,6 @@ class Montes(Boss):
         self.hp = 500
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
 
-    def intro(self):
+    def intro(self,tiempo):
         pass
 
