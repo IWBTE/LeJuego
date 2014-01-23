@@ -17,6 +17,8 @@ from HP import HP
 from EnergyDrink import EnergyDrink
 from Keyboard import keyboard
 
+from Boss import Montes
+
 
 class dummysound:
     def play(self): pass
@@ -33,7 +35,7 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
@@ -45,6 +47,8 @@ class Etapa:
         self.spawnTime = _spawnTime
         self.maxEnemies = _maxEnemies
         self.lastSpawn = 0
+        self.spawned = 0
+        self.enemigosEtapa = _enemigosEtapa
 
         self.killed = 0
 
@@ -59,13 +63,14 @@ class Etapa:
         self.laBala = load_sound("Bala.wav")
 
     def spawnEnemy(self,tiempo):
-        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies:
+        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned <= self.enemigosEtapa:
             num = uniform(0,1)
             if num<=0.7:
                 self.zorrones.append(Zorron(self.cargaImagen))
             else:
                 self.lovers.append(Lover(self.cargaImagen))    
             self.enemies += 1
+            self.spawned += 1
             self.lastSpawn = 0
         else:
             self.lastSpawn+=tiempo
@@ -224,14 +229,21 @@ class Etapa:
             if event.type == pygame.QUIT:
                 self.continuar = False
 
+    def BossBattle(self,ejecutar):
+        if ejecutar:
+            seguir = True
+            while seguir:
+                pass
+
     def ejecutarEtapa(self, cancion):
 
         pygame.mixer.music.load(cancion+".wav")
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen)
-        miHP = HP(self.cargaImagen) 
+        miHP = HP(self.cargaImagen)
+        Jefe = True
         
-        while self.continuar and self.killed<=25:
+        while self.continuar and self.killed<=self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()     
@@ -270,8 +282,33 @@ class Etapa:
             pygame.display.flip()
 
             if Vicho.hp <=0:
+                Jefe=False
                 break
 
+        Raul = Montes(self.cargaImagen)
+        while Jefe:
+            tiempo = float((self.clock).tick(42))
+            (self.screen).blit(self.fondo, (0, 0))
+            pygame.event.get()     
+            Vicho.directores = []   
+            keyboard(Vicho,tiempo,self)
+
+            Vicho.margen()
+            (self.screen).blit(Vicho.image, Vicho.rect)
+
+            self.moverBalas(tiempo)
+
+            Raul.mover(tiempo)
+            print Raul.rect.centery
+            (self.screen).blit(Raul.image, Raul.rect)
+
+
+            Vicho.poderDisparar(tiempo)
+
+            self.actualizarHP(miHP,Vicho)
+
+            Vicho.invencibilidad(tiempo)
+            pygame.display.flip()
             
 
 

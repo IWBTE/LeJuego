@@ -61,7 +61,7 @@ def main():
 
         #Ejecutamos la Etapa
 
-        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6)
+        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6,5)
         miEtapa.ejecutarEtapa("leJuego")
 
         miGO = GameOver(load_image,clock,screen)
