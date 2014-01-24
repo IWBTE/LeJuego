@@ -6,6 +6,8 @@ from random import uniform
 from random import randint
 import time
 from math import floor
+from Serpiente import Serpiente
+from Fireball import Fireball
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self, _loadImage):
@@ -18,11 +20,20 @@ class Boss(pygame.sprite.Sprite):
         self.invencible = True
         self.introduccion = 0
 
+    def choque(self,machucao):
+        if self.rect.colliderect(machucao.rect) and not(machucao.invencible):
+            machucao.invencible=True
+            return True
+
 class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 500
+        self.hp = 50
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
+        self.velocidad = -4
+        self.lugar = "l"
+        self.lastAt = 0
+        self.Fireball = 0
 
     def cambiarFrame(self):
         self.frameActual+=1
@@ -31,17 +42,32 @@ class Montes(Boss):
         
 
     def mover(self,tiempo):
+        self.cambiarFrame()
         if self.introduccion<=3000:
             self.introduccion+=tiempo
-        if self.introduccion>=3000:
+        if self.introduccion>=3000 and self.invencible:
             self.invencible = False
         if self.rect.centery<=100:
             self.rect.centery += 3*(tiempo/30)
             a = self.frameActual//3 + 1
             self.image = self.loadImage("Montes/d"+str(a)+".gif","imagenes",alpha=False)
         if self.introduccion > 3000:
-            pass
+            if self.rect.centerx <10:
+                self.velocidad = 4
+                self.lugar = "r"
+            if self.rect.centerx > 600:
+                self.velocidad = -4
+                self.lugar = "l"
+            self.rect.centerx += self.velocidad*(tiempo/30)
+            a = self.frameActual//3 + 1
+            self.image = self.loadImage("Montes/"+self.lugar+str(a)+".gif","imagenes",alpha=False)
 
-
-
-
+    def atacar(self,tiempo, objetivo,etapa):
+        self.lastAt+=tiempo
+        self.Fireball+=tiempo
+        if self.lastAt>=1800:
+            self.lastAt = 0
+            etapa.proyRaul.append(Serpiente(self.rect.centerx,self.rect.centery,self.loadImage))
+        if self.Fireball>=7500:
+            self.Fireball=0
+            etapa.proyRaul.append(Fireball(self.rect.centerx,self.rect.centery,self.loadImage))

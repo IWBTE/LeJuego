@@ -15,6 +15,9 @@
   <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
   <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
   <ItemGroup>
+    <Compile Include="Fireball.py" />
+    <Compile Include="Serpiente.py" />
+    <Compile Include="Victory.py" />
     <Content Include="Readme!.txt" />
     <Compile Include="Bala.py" />
     <Compile Include="Boss.py" />

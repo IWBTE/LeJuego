@@ -11,7 +11,8 @@ from math import floor
 from Menu import Menu
 from Etapa import Etapa
 from GameOver import GameOver
-
+from Boss import Montes
+from Victory import Victory
 #Constantes
 
 SCREEN_WIDTH = 640
@@ -61,11 +62,15 @@ def main():
 
         #Ejecutamos la Etapa
 
-        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6,5)
-        miEtapa.ejecutarEtapa("leJuego")
+        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6,5,Montes(load_image))
+        var = miEtapa.ejecutarEtapa("leJuego")
 
-        miGO = GameOver(load_image,clock,screen)
-        continuar = miGO.ejecutarMenu()
+        if var:
+            miVic = Victory(load_image,clock,screen)
+            continuar = miVic.ejecutarMenu()
+        else:
+            miGO = GameOver(load_image,clock,screen)
+            continuar = miGO.ejecutarMenu()
 
     pygame.mixer.quit()
     pygame.display.quit()

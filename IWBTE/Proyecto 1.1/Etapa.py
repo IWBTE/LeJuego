@@ -17,6 +17,8 @@ from HP import HP
 from EnergyDrink import EnergyDrink
 from Keyboard import keyboard
 
+from Serpiente import Serpiente
+
 from Boss import Montes
 
 
@@ -35,7 +37,7 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
@@ -51,8 +53,10 @@ class Etapa:
         self.enemigosEtapa = _enemigosEtapa
 
         self.killed = 0
+        self.jefe = _jefe
 
         self.balas = []
+        self.proyRaul = []
         self.heart = []
         self.energeticas = []
         self.corazones = []
@@ -63,7 +67,7 @@ class Etapa:
         self.laBala = load_sound("Bala.wav")
 
     def spawnEnemy(self,tiempo):
-        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned <= self.enemigosEtapa:
+        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned < self.enemigosEtapa:
             num = uniform(0,1)
             if num<=0.7:
                 self.zorrones.append(Zorron(self.cargaImagen))
@@ -90,6 +94,14 @@ class Etapa:
                 self.heart[i].cambiarFrame()
                 if self.heart[i].mov:
                     (self.screen).blit(self.heart[i].image,self.heart[i].rect) 
+
+    def moverSerpientes(self,tiempo,jugador):
+        if len(self.proyRaul)>0:
+            for i in range(len(self.proyRaul)):
+                self.proyRaul[i].mover(tiempo,jugador)
+                self.proyRaul[i].cambiarFrame()
+                if self.proyRaul[i].mov:
+                    (self.screen).blit(self.proyRaul[i].image,self.proyRaul[i].rect) 
                     
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -119,11 +131,24 @@ class Etapa:
                     if i.tunazo(self.lovers[k]):
                         self.lovers[k].hp -= 10
 
+    def chaoJefe(self):
+        if not(self.jefe.invencible):
+            for i in (self.balas):
+                if i.tunazo(self.jefe):
+                    self.jefe.hp -= 10
+
     def enamoramiento(self,jugador):
         if len(self.heart)>0:
             for i in (self.heart):
                 if i.flechazo(jugador):
                     jugador.hp-=30
+
+    def raulPower(self,jugador):
+        if len(self.proyRaul)>0:
+            for i in (self.proyRaul):
+                var = i.atRaul(jugador)
+                if var>0:
+                    jugador.hp-=var
                               
 
     def eliminarBalas(self):
@@ -141,6 +166,15 @@ class Etapa:
             while count < len(self.heart):
                 if self.heart[count].mov == False:
                     del self.heart[count]
+                else:
+                    count +=1
+
+    def eliminarSerpientes(self):
+        if len(self.proyRaul)>0:
+            count = 0
+            while count < len(self.proyRaul):
+                if self.proyRaul[count].mov == False:
+                    del self.proyRaul[count]
                 else:
                     count +=1
 
@@ -220,6 +254,10 @@ class Etapa:
                 if i.colisionConPersonaje(jugador):
                     jugador.hp-=10
 
+    def danarConJefe(self,jugador):
+        if self.jefe.choque(jugador):
+            jugador.hp-=10
+
     def actualizarHP(self,HP,jugador):
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
@@ -241,9 +279,8 @@ class Etapa:
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen)
         miHP = HP(self.cargaImagen)
-        Jefe = True
         
-        while self.continuar and self.killed<=self.enemigosEtapa:
+        while self.continuar and self.killed<self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()     
@@ -282,11 +319,10 @@ class Etapa:
             pygame.display.flip()
 
             if Vicho.hp <=0:
-                Jefe=False
-                break
+                return False
 
-        Raul = Montes(self.cargaImagen)
-        while Jefe:
+        
+        while True:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()     
@@ -297,10 +333,22 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.moverBalas(tiempo)
+            self.moverSerpientes(tiempo,Vicho)
 
-            Raul.mover(tiempo)
-            print Raul.rect.centery
-            (self.screen).blit(Raul.image, Raul.rect)
+            self.chaoJefe()
+            self.eliminarBalas()
+            self.eliminarSerpientes()
+
+            self.raulPower(Vicho)
+
+
+            self.jefe.mover(tiempo)
+            self.jefe.atacar(tiempo,Vicho,self)
+
+
+            self.danarConJefe(Vicho)
+
+            (self.screen).blit(self.jefe.image, self.jefe.rect)
 
 
             Vicho.poderDisparar(tiempo)
@@ -309,6 +357,11 @@ class Etapa:
 
             Vicho.invencibilidad(tiempo)
             pygame.display.flip()
+
+            if Vicho.hp <=0:                
+                return False
+            if self.jefe.hp <=0:
+                return True
             
 
 
