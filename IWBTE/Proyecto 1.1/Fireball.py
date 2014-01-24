@@ -29,7 +29,7 @@ class Fireball(pygame.sprite.Sprite):
         self.distancia = 0
         self.frameActual=1
         self.image = load_image("Fireball/f1.gif", "imagenes", alpha=True)
-        self.rect = Rect(0,0,30,30)
+        self.rect = Rect(0,0,20,20)
         self.rect.centerx = posx
         self.rect.centery = posy
         self.mov = True
@@ -69,6 +69,6 @@ class Fireball(pygame.sprite.Sprite):
             self.ver=False
             self.vel = 7
 
-        if self.distancia>350:
+        if self.distancia>370:
             self.kill()
             self.mov = False
