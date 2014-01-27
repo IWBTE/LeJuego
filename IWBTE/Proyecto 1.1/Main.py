@@ -58,11 +58,13 @@ def main():
 
     miMenu = Menu(load_image,clock,screen)
     miMenu.ejecutarMenu()
+    jefecitos = dict()
+    jefecitos["Raul"] = Montes
     while continuar:
 
         #Ejecutamos la Etapa
 
-        miEtapa = Etapa(load_image,clock,screen,6,3000,0.6,5,Montes(load_image))
+        miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,3,jefecitos["Raul"](load_image),"Raul")
         var = miEtapa.ejecutarEtapa("leJuego")
 
         if var:

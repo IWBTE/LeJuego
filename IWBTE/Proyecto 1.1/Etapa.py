@@ -20,6 +20,7 @@ from Keyboard import keyboard
 from Serpiente import Serpiente
 
 from Boss import Montes
+from Ataques import balazo
 
 
 class dummysound:
@@ -37,13 +38,17 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
         self.screen = _screen
         self.continuar = True
         self.probabilidadEnergetica = _probabilidadEnergetica
+
+
+        self.especialJefe = dict()
+        self.especialJefe["Raul"] = self.raulPower
         
         self.enemies = 0
         self.spawnTime = _spawnTime
@@ -54,15 +59,18 @@ class Etapa:
 
         self.killed = 0
         self.jefe = _jefe
+        self.nombreJefe = _nombreJefe
 
         self.balas = []
-        self.proyRaul = []
+        self.proyJefe = []
         self.heart = []
         self.energeticas = []
         self.corazones = []
         
         self.lovers = []
         self.zorrones = []
+
+        self.ataqueActual = balazo
 
         self.laBala = load_sound("Bala.wav")
 
@@ -95,13 +103,13 @@ class Etapa:
                 if self.heart[i].mov:
                     (self.screen).blit(self.heart[i].image,self.heart[i].rect) 
 
-    def moverSerpientes(self,tiempo,jugador):
-        if len(self.proyRaul)>0:
-            for i in range(len(self.proyRaul)):
-                self.proyRaul[i].mover(tiempo,jugador)
-                self.proyRaul[i].cambiarFrame()
-                if self.proyRaul[i].mov:
-                    (self.screen).blit(self.proyRaul[i].image,self.proyRaul[i].rect) 
+    def moverProyRaul(self,tiempo,jugador):
+        if len(self.proyJefe)>0:
+            for i in range(len(self.proyJefe)):
+                self.proyJefe[i].mover(tiempo,jugador)
+                self.proyJefe[i].cambiarFrame()
+                if self.proyJefe[i].mov:
+                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect) 
                     
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -144,8 +152,8 @@ class Etapa:
                     jugador.hp-=30
 
     def raulPower(self,jugador):
-        if len(self.proyRaul)>0:
-            for i in (self.proyRaul):
+        if len(self.proyJefe)>0:
+            for i in (self.proyJefe):
                 var = i.atRaul(jugador)
                 if var>0:
                     jugador.hp-=var
@@ -169,12 +177,12 @@ class Etapa:
                 else:
                     count +=1
 
-    def eliminarSerpientes(self):
-        if len(self.proyRaul)>0:
+    def eliminarProyRaul(self):
+        if len(self.proyJefe)>0:
             count = 0
-            while count < len(self.proyRaul):
-                if self.proyRaul[count].mov == False:
-                    del self.proyRaul[count]
+            while count < len(self.proyJefe):
+                if self.proyJefe[count].mov == False:
+                    del self.proyJefe[count]
                 else:
                     count +=1
 
@@ -240,8 +248,6 @@ class Etapa:
         self.tomarEnergetica(jugador)
         self.tiempoEnergeticas(tiempo)
         self.eliminarEnergeticas()
-
-
 
     def danarPersonaje(self,jugador):
         if len(self.zorrones)>0:
@@ -333,13 +339,14 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.moverBalas(tiempo)
-            self.moverSerpientes(tiempo,Vicho)
+            self.moverProyRaul(tiempo,Vicho)
 
             self.chaoJefe()
             self.eliminarBalas()
-            self.eliminarSerpientes()
+            self.eliminarProyRaul()
 
-            self.raulPower(Vicho)
+            
+            self.especialJefe[self.nombreJefe](Vicho)
 
 
             self.jefe.mover(tiempo)

@@ -35,14 +35,4 @@ def keyboard(hero,reloj,etapa):
             hero.directores.append("r")
         hero.ultimo = "r"
     if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
-        d = hero.ultimo
-        hero.retrasoBalas=1
-        if len(hero.directores)>0 and not("l" in hero.directores and "r" in hero.directores) and not("u" in hero.directores and "d" in hero.directores):
-            dire = ""
-            for letra in hero.directores:
-                dire = dire+letra
-            etapa.laBala.play()
-            etapa.balas.append(Bala(hero,dire))
-        else:
-            etapa.laBala.play()
-            etapa.balas.append(Bala(hero,d))
+        etapa.ataqueActual(hero,reloj,etapa)

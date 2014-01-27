@@ -28,7 +28,7 @@ class Boss(pygame.sprite.Sprite):
 class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 50
+        self.hp = 150
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
         self.velocidad = -4
         self.lugar = "l"
@@ -67,7 +67,7 @@ class Montes(Boss):
         self.Fireball+=tiempo
         if self.lastAt>=1800:
             self.lastAt = 0
-            etapa.proyRaul.append(Serpiente(self.rect.centerx,self.rect.centery,self.loadImage))
+            etapa.proyJefe.append(Serpiente(self.rect.centerx,self.rect.centery,self.loadImage))
         if self.Fireball>=7500:
             self.Fireball=0
-            etapa.proyRaul.append(Fireball(self.rect.centerx,self.rect.centery,self.loadImage))
+            etapa.proyJefe.append(Fireball(self.rect.centerx,self.rect.centery,self.loadImage))
