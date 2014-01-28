@@ -48,7 +48,7 @@ class Etapa:
 
 
         self.especialJefe = dict()
-        self.especialJefe["Raul"] = self.raulPower
+        self.especialJefe["Raul"] = self.packRaul
         
         self.enemies = 0
         self.spawnTime = _spawnTime
@@ -109,7 +109,12 @@ class Etapa:
                 self.proyJefe[i].mover(tiempo,jugador)
                 self.proyJefe[i].cambiarFrame()
                 if self.proyJefe[i].mov:
-                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect) 
+                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
+
+    def packRaul(self,tiempo,jugador):
+        self.raulPower(jugador)
+        self.moverProyRaul(tiempo,jugador)
+        self.eliminarProyRaul()
                     
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -339,14 +344,12 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.moverBalas(tiempo)
-            self.moverProyRaul(tiempo,Vicho)
 
             self.chaoJefe()
             self.eliminarBalas()
-            self.eliminarProyRaul()
 
             
-            self.especialJefe[self.nombreJefe](Vicho)
+            self.especialJefe[self.nombreJefe](tiempo,Vicho)
 
 
             self.jefe.mover(tiempo)
