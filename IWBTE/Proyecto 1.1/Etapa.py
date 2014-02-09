@@ -7,12 +7,20 @@ from random import randint
 import time
 from math import floor
 
-from Game import Game
 from Personaje import Personaje
 
 from Bala import Bala
 from Enemy import Zorron
+from Enemy import Lover
+from Corazon import Corazon
 from HP import HP
+from EnergyDrink import EnergyDrink
+from Keyboard import keyboard
+
+from Serpiente import Serpiente
+
+from Boss import Montes
+from Ataques import balazo
 
 
 class dummysound:
@@ -30,68 +38,51 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
         self.screen = _screen
-        self.ultimo = ""
-        self.directores = []
+        self.continuar = True
+        self.probabilidadEnergetica = _probabilidadEnergetica
+
+
+        self.especialJefe = dict()
+        self.especialJefe["Raul"] = self.packRaul
+        
         self.enemies = 0
-        self.spawnTime = 3000
+        self.spawnTime = _spawnTime
+        self.maxEnemies = _maxEnemies
         self.lastSpawn = 0
+        self.spawned = 0
+        self.enemigosEtapa = _enemigosEtapa
+
+        self.killed = 0
+        self.jefe = _jefe
+        self.nombreJefe = _nombreJefe
 
         self.balas = []
+        self.proyJefe = []
+        self.heart = []
+        self.energeticas = []
+        self.corazones = []
         
         self.lovers = []
         self.zorrones = []
 
+        self.ataqueActual = balazo
+
         self.laBala = load_sound("Bala.wav")
 
-    def keyboard(self,hero,reloj):
-        """Controla el input del teclado"""  
-        if pygame.key.get_pressed()[K_UP]:
-            hero.moverArriba(reloj)
-            hero.actualizarFrame("u")
-            if not("u" in self.directores):
-                self.directores.append("u")
-            self.ultimo = "u"
-        if pygame.key.get_pressed()[K_DOWN]:
-            hero.moverAbajo(reloj)
-            hero.actualizarFrame("d")
-            if not("d" in self.directores):
-                self.directores.append("d")
-            self.ultimo = "d"
-        if pygame.key.get_pressed()[K_LEFT]:
-            hero.moverIzquierda(reloj)
-            hero.actualizarFrame("l")
-            if not("l" in self.directores):
-                self.directores.append("l")
-            self.ultimo = "l"
-        if pygame.key.get_pressed()[K_RIGHT]:
-            hero.moverDerecha(reloj)
-            hero.actualizarFrame("r")
-            if not("r" in self.directores):
-                self.directores.append("r")
-            self.ultimo = "r"
-        if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
-            d = self.ultimo
-            hero.retrasoBalas=1
-            if len(self.directores)>0 and not("l" in self.directores and "r" in self.directores) and not("u" in self.directores and "d" in self.directores):
-                dire = ""
-                for letra in self.directores:
-                    dire = dire+letra
-                self.laBala.play()
-                self.balas.append(Bala(hero,dire))
-            else:
-                self.laBala.play()
-                self.balas.append(Bala(hero,d))
-
-
     def spawnEnemy(self,tiempo):
-        if self.lastSpawn>=self.spawnTime and self.enemies<=6:
-            self.zorrones.append(Zorron(self.cargaImagen))
+        if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned < self.enemigosEtapa:
+            num = uniform(0,1)
+            if num<=0.7:
+                self.zorrones.append(Zorron(self.cargaImagen))
+            else:
+                self.lovers.append(Lover(self.cargaImagen))    
             self.enemies += 1
+            self.spawned += 1
             self.lastSpawn = 0
         else:
             self.lastSpawn+=tiempo
@@ -103,6 +94,27 @@ class Etapa:
                 self.balas[i].cambiarFrame()
                 if self.balas[i].mov:
                     (self.screen).blit(self.balas[i].image,self.balas[i].rect) 
+
+    def moverCorazones(self,leReloj,jugador):
+        if len(self.heart)>0:
+            for i in range(len(self.heart)):
+                self.heart[i].mover(leReloj,jugador)
+                self.heart[i].cambiarFrame()
+                if self.heart[i].mov:
+                    (self.screen).blit(self.heart[i].image,self.heart[i].rect) 
+
+    def moverProyRaul(self,tiempo,jugador):
+        if len(self.proyJefe)>0:
+            for i in range(len(self.proyJefe)):
+                self.proyJefe[i].mover(tiempo,jugador)
+                self.proyJefe[i].cambiarFrame()
+                if self.proyJefe[i].mov:
+                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
+
+    def packRaul(self,tiempo,jugador):
+        self.raulPower(jugador)
+        self.moverProyRaul(tiempo,jugador)
+        self.eliminarProyRaul()
                     
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -110,7 +122,15 @@ class Etapa:
                 self.zorrones[i].mover(jugador,leReloj,self)
                 self.zorrones[i].cambiarFrame()
                 if self.zorrones[i].vivo:                
-                    (self.screen).blit(self.zorrones[i].image,self.zorrones[i].rect) 
+                    (self.screen).blit(self.zorrones[i].image,self.zorrones[i].rect)
+
+    def moverLovers(self,leReloj,jugador):
+        if len(self.lovers)>0:
+            for i in range(len(self.lovers)):
+                self.lovers[i].enamorar(jugador,leReloj,self)
+                self.lovers[i].cambiarFrame()
+                if self.lovers[i].vivo:
+                    (self.screen).blit(self.lovers[i].image,self.lovers[i].rect)
     
     def balacera(self):
         for i in (self.balas):
@@ -118,6 +138,30 @@ class Etapa:
                 for j in range(len(self.zorrones)):
                     if i.tunazo(self.zorrones[j]):
                         self.zorrones[j].hp -= 10
+        
+            if len(self.lovers)>0:
+                for k in range(len(self.lovers)):
+                    if i.tunazo(self.lovers[k]):
+                        self.lovers[k].hp -= 10
+
+    def chaoJefe(self):
+        if not(self.jefe.invencible):
+            for i in (self.balas):
+                if i.tunazo(self.jefe):
+                    self.jefe.hp -= 10
+
+    def enamoramiento(self,jugador):
+        if len(self.heart)>0:
+            for i in (self.heart):
+                if i.flechazo(jugador):
+                    jugador.hp-=30
+
+    def raulPower(self,jugador):
+        if len(self.proyJefe)>0:
+            for i in (self.proyJefe):
+                var = i.atRaul(jugador)
+                if var>0:
+                    jugador.hp-=var
                               
 
     def eliminarBalas(self):
@@ -129,17 +173,86 @@ class Etapa:
                 else:
                     count+=1
 
+    def eliminarCorazones(self):
+        if len(self.heart)>0:
+            count = 0
+            while count < len(self.heart):
+                if self.heart[count].mov == False:
+                    del self.heart[count]
+                else:
+                    count +=1
+
+    def eliminarProyRaul(self):
+        if len(self.proyJefe)>0:
+            count = 0
+            while count < len(self.proyJefe):
+                if self.proyJefe[count].mov == False:
+                    del self.proyJefe[count]
+                else:
+                    count +=1
+
     def eliminarZorrones(self):
         if len(self.zorrones)>0:
             count = 0
             while count < len(self.zorrones):
                 if self.zorrones[count].hp<=0:
                     self.zorrones[count].vivo = False
+                    posx = self.zorrones[count].rect.centerx
+                    posy = self.zorrones[count].rect.centery
+                    self.spawnearEnergetica(posx,posy)
                     self.zorrones[count].kill()
                     del self.zorrones[count]
                     self.enemies-=1
+                    self.killed += 1
                 else:
                     count+=1
+
+    def eliminarLovers(self):
+        if len(self.lovers)>0:
+            count = 0
+            while count < len(self.lovers):
+                if self.lovers[count].hp<=0:
+                    self.lovers[count].vivo = False
+                    posx = self.lovers[count].rect.centerx
+                    posy = self.lovers[count].rect.centery
+                    self.spawnearEnergetica(posx,posy)
+                    self.lovers[count].kill()
+                    del self.lovers[count]
+                    self.enemies-=1
+                    self.killed += 1
+                else:
+                    count+=1
+    
+    def spawnearEnergetica(self, posx, posy):
+        a = uniform(0,1)
+        if a <= self.probabilidadEnergetica:
+            self.energeticas.append(EnergyDrink(posx,posy,self.cargaImagen))
+
+    def tomarEnergetica(self, jugador):
+        for i in self.energeticas:
+            if i.bebible:
+                (self.screen).blit(i.image,i.rect)
+                if i.africano(jugador):
+                    jugador.hp = 100
+
+    def tiempoEnergeticas(self, tiempo):
+        for i in self.energeticas:
+            if i.bebible:
+                i.tomameODejame(tiempo)
+
+    def eliminarEnergeticas(self):
+        if len(self.energeticas)>0:
+            count = 0
+            while count<(len(self.energeticas)):
+                if not(self.energeticas[count].bebible):
+                    del self.energeticas[count]
+                else:
+                    count+=1
+
+    def energyPack(self,jugador,tiempo):
+        self.tomarEnergetica(jugador)
+        self.tiempoEnergeticas(tiempo)
+        self.eliminarEnergeticas()
 
     def danarPersonaje(self,jugador):
         if len(self.zorrones)>0:
@@ -147,46 +260,118 @@ class Etapa:
                 if i.colisionConPersonaje(jugador):
                     jugador.hp-=10
 
+        if len(self.lovers)>0:
+            for i in self.lovers:
+                if i.colisionConPersonaje(jugador):
+                    jugador.hp-=10
+
+    def danarConJefe(self,jugador):
+        if self.jefe.choque(jugador):
+            jugador.hp-=10
+
+    def actualizarHP(self,HP,jugador):
+        HP.actualizar(jugador)
+        (self.screen).blit(HP.image, HP.rect)
+
+    def continuar(self):
+        for event in pygame.event.get():
+            if event.type == pygame.QUIT:
+                self.continuar = False
+
+    def BossBattle(self,ejecutar):
+        if ejecutar:
+            seguir = True
+            while seguir:
+                pass
+
     def ejecutarEtapa(self, cancion):
 
         pygame.mixer.music.load(cancion+".wav")
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen)
-        miHP = HP(self.cargaImagen) 
-
-        while True:
+        miHP = HP(self.cargaImagen)
+        
+        while self.continuar and self.killed<self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
             (self.screen).blit(self.fondo, (0, 0))
-            pygame.event.get() 
-            
-            self.directores = []          
-            self.keyboard(Vicho,tiempo)
+            pygame.event.get()     
+            Vicho.directores = []   
+            keyboard(Vicho,tiempo,self)
 
             Vicho.margen()
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.spawnEnemy(tiempo)
+
             self.moverZorrones(tiempo,Vicho)
+            self.moverLovers(tiempo,Vicho)
 
             self.moverBalas(tiempo)
+            self.moverCorazones(tiempo,Vicho)            
+            
             self.balacera()
+            self.enamoramiento(Vicho)
             self.eliminarZorrones()
+            self.eliminarLovers()
+
+            self.energyPack(Vicho,tiempo)
 
             self.danarPersonaje(Vicho)
 
             self.eliminarBalas()
+            self.eliminarCorazones()
+
             Vicho.poderDisparar(tiempo)
 
-            miHP.actualizar(Vicho)
-            (self.screen).blit(miHP.image, miHP.rect)
+            self.actualizarHP(miHP,Vicho)
 
             Vicho.invencibilidad(tiempo)
 
             pygame.display.flip()
 
             if Vicho.hp <=0:
-                break
+                return False
 
+        
+        while True:
+            tiempo = float((self.clock).tick(42))
+            (self.screen).blit(self.fondo, (0, 0))
+            pygame.event.get()     
+            Vicho.directores = []   
+            keyboard(Vicho,tiempo,self)
+
+            Vicho.margen()
+            (self.screen).blit(Vicho.image, Vicho.rect)
+
+            self.moverBalas(tiempo)
+
+            self.chaoJefe()
+            self.eliminarBalas()
+
+            
+            self.especialJefe[self.nombreJefe](tiempo,Vicho)
+
+
+            self.jefe.mover(tiempo)
+            self.jefe.atacar(tiempo,Vicho,self)
+
+
+            self.danarConJefe(Vicho)
+
+            (self.screen).blit(self.jefe.image, self.jefe.rect)
+
+
+            Vicho.poderDisparar(tiempo)
+
+            self.actualizarHP(miHP,Vicho)
+
+            Vicho.invencibilidad(tiempo)
+            pygame.display.flip()
+
+            if Vicho.hp <=0:                
+                return False
+            if self.jefe.hp <=0:
+                return True
             
 
 

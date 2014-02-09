@@ -23,6 +23,9 @@ class Personaje(pygame.sprite.Sprite):
         self.ultimoHit = 0
         self.vivo = True
 
+        self.ultimo = ""
+        self.directores = []
+
     def margen(self):
         """Controla que el PJ no se salga"""
         if self.rect.bottom >= 470:
@@ -37,7 +40,7 @@ class Personaje(pygame.sprite.Sprite):
     def poderDisparar(self,leReloj):
         if self.retrasoBalas>=1:
             self.retrasoBalas+=leReloj
-        if self.retrasoBalas>=701:
+        if self.retrasoBalas>=651:
             self.retrasoBalas=0
 
     def invencibilidad(self,tiempo):

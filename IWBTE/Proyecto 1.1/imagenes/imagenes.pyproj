@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+        <SchemaVersion>2.0</SchemaVersion>
+        <ProjectGuid>{cd0a1d64-2e20-4a5c-90b0-d0fa70f6da2f}</ProjectGuid>
+        <ProjectHome />
+        <StartupFile />
+        <SearchPath />
+        <WorkingDirectory>.</WorkingDirectory>
+        <OutputPath>.</OutputPath>
+        <VisualStudioVersion Condition="'$(VisualStudioVersion)' == ''">10.0</VisualStudioVersion>
+        <VSToolsPath Condition="'$(VSToolsPath)' == ''">$(MSBuildExtensionsPath32)\Microsoft\VisualStudio\v$(VisualStudioVersion)</VSToolsPath>
+    </PropertyGroup>
+    <PropertyGroup Condition="'$(Configuration)' == 'Debug'" />
+    <PropertyGroup Condition="'$(Configuration)' == 'Release'" />
+    <ItemGroup>
+        <Content Include="bola.png" />
+        <Content Include="fondo.png" />
+        <Content Include="Intro.png" />
+        <Content Include="laser.png" />
+        <Content Include="perrin.jpg" />
+        <Content Include="benedictus.gif" />
+        <Content Include="Drink.gif" />
+        <Content Include="pela.gif" />
+        <Content Include="plox.gif" />
+        <Content Include="plox2.gif" />
+        <Content Include="cc.bmp" />
+        <Content Include="cob.bmp" />
+        <Content Include="Baqueta\baqueta.bmp" />
+        <Content Include="Barra HP\h0.gif" />
+        <Content Include="Barra HP\h10.gif" />
+        <Content Include="Barra HP\h100.gif" />
+        <Content Include="Barra HP\h20.gif" />
+        <Content Include="Barra HP\h30.gif" />
+        <Content Include="Barra HP\h40.gif" />
+        <Content Include="Barra HP\h50.gif" />
+        <Content Include="Barra HP\h60.gif" />
+        <Content Include="Barra HP\h70.gif" />
+        <Content Include="Barra HP\h80.gif" />
+        <Content Include="Barra HP\h90.gif" />
+        <Content Include="Corazon\c1.gif" />
+        <Content Include="Corazon\c2.gif" />
+        <Content Include="Lover\lover.bmp" />
+        <Content Include="Vicho\vicho.bmp" />
+        <Content Include="Baqueta\Frames\1.gif" />
+        <Content Include="Baqueta\Frames\2.gif" />
+        <Content Include="Baqueta\Frames\3.gif" />
+        <Content Include="Baqueta\Frames\4.gif" />
+        <Content Include="Baqueta\Frames\5.gif" />
+        <Content Include="Baqueta\Frames\6.gif" />
+        <Content Include="Baqueta\Frames\7.gif" />
+        <Content Include="Baqueta\Frames\8.gif" />
+        <Content Include="Lover\Frames\d1.gif" />
+        <Content Include="Lover\Frames\d2.gif" />
+        <Content Include="Lover\Frames\d3.gif" />
+        <Content Include="Lover\Frames\l1.gif" />
+        <Content Include="Lover\Frames\l2.gif" />
+        <Content Include="Lover\Frames\l3.gif" />
+        <Content Include="Lover\Frames\r1.gif" />
+        <Content Include="Lover\Frames\r2.gif" />
+        <Content Include="Lover\Frames\r3.gif" />
+        <Content Include="Lover\Frames\u1.gif" />
+        <Content Include="Lover\Frames\u2.gif" />
+        <Content Include="Lover\Frames\u3.gif" />
+        <Content Include="Vicho\Frames\All.gif" />
+        <Content Include="Vicho\Frames\d1.gif" />
+        <Content Include="Vicho\Frames\d2.gif" />
+        <Content Include="Vicho\Frames\d3.gif" />
+        <Content Include="Vicho\Frames\l1.gif" />
+        <Content Include="Vicho\Frames\l2.gif" />
+        <Content Include="Vicho\Frames\l3.gif" />
+        <Content Include="Vicho\Frames\r1.gif" />
+        <Content Include="Vicho\Frames\r2.gif" />
+        <Content Include="Vicho\Frames\r3.gif" />
+        <Content Include="Vicho\Frames\u1.gif" />
+        <Content Include="Vicho\Frames\u2.gif" />
+        <Content Include="Vicho\Frames\u3.gif" />
+        <Content Include="Zorron\Frames\d1.gif" />
+        <Content Include="Zorron\Frames\d2.gif" />
+        <Content Include="Zorron\Frames\d3.gif" />
+        <Content Include="Zorron\Frames\l1.gif" />
+        <Content Include="Zorron\Frames\l2.gif" />
+        <Content Include="Zorron\Frames\l3.gif" />
+        <Content Include="Zorron\Frames\r1.gif" />
+        <Content Include="Zorron\Frames\r2.gif" />
+        <Content Include="Zorron\Frames\r3.gif" />
+        <Content Include="Zorron\Frames\u1.gif" />
+        <Content Include="Zorron\Frames\u2.gif" />
+        <Content Include="Zorron\Frames\u3.gif" />
+    </ItemGroup>
+    <ItemGroup>
+        <Folder Include="Baqueta" />
+        <Folder Include="Baqueta\Frames" />
+        <Folder Include="Barra HP" />
+        <Folder Include="Corazon" />
+        <Folder Include="Lover" />
+        <Folder Include="Lover\Frames" />
+        <Folder Include="Vicho" />
+        <Folder Include="Vicho\Frames" />
+        <Folder Include="Zorron\Frames" />
+    </ItemGroup>
+    <Import Project="$(MSBuildToolsPath)\Microsoft.Common.targets" />
+</Project>

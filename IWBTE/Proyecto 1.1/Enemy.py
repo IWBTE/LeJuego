@@ -7,6 +7,8 @@ from random import randint
 import time
 from math import floor
 
+from Corazon import Corazon
+
 class Enemy(pygame.sprite.Sprite):
     def __init__(self, _loadImage):
         pygame.sprite.Sprite.__init__(self)
@@ -34,14 +36,15 @@ class Enemy(pygame.sprite.Sprite):
 
     def mover(self, objetivo, reloj, etapa):
         #Forgive me for this sin...
+        a = self.frameActual//3 + 1
         if objetivo.rect.centerx - self.rect.centerx >= 0:
-            self.image = self.loadImage(self.path+"r"+str(self.frameActual)+".gif","imagenes",alpha=False)            
+            self.image = self.loadImage(self.path+"r"+str(a)+".gif","imagenes",alpha=False)            
             respaldo = self.rect.centerx
             self.rect.centerx += self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
                 self.rect.centerx = respaldo
         else:
-            self.image = self.loadImage(self.path+"l"+str(self.frameActual)+".gif","imagenes",alpha=False)            
+            self.image = self.loadImage(self.path+"l"+str(a)+".gif","imagenes",alpha=False)            
             respaldo = self.rect.centerx
             self.rect.centerx -= self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
@@ -49,14 +52,14 @@ class Enemy(pygame.sprite.Sprite):
 
         if objetivo.rect.centery - self.rect.centery >= 0:
             if objetivo.rect.centery - self.rect.centery >= 10:
-                self.image = self.loadImage(self.path+"d"+str(self.frameActual)+".gif","imagenes",alpha=False)
+                self.image = self.loadImage(self.path+"d"+str(a)+".gif","imagenes",alpha=False)
             respaldo = self.rect.centery
             self.rect.centery += self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
                 self.rect.centery = respaldo
         else:
             if objetivo.rect.centery - self.rect.centery <= -10:
-                self.image = self.loadImage(self.path+"u"+str(self.frameActual)+".gif","imagenes",alpha=False)
+                self.image = self.loadImage(self.path+"u"+str(a)+".gif","imagenes",alpha=False)
             respaldo = self.rect.centery
             self.rect.centery -= self.velocidad*(reloj/30)
             if self.hustonTenemosProblemas(etapa):
@@ -64,7 +67,7 @@ class Enemy(pygame.sprite.Sprite):
 
     def cambiarFrame(self):
         self.frameActual+=1
-        if self.frameActual>3:
+        if self.frameActual>8:
             self.frameActual=1
 
 
@@ -75,3 +78,26 @@ class Zorron(Enemy):
         self.path = "Zorron/Frames/"
         self.velocidad = 2.3
         self.hp = 50
+
+class Lover(Enemy):
+    def __init__(self,_loadImage):
+        Enemy.__init__(self,_loadImage)
+        self.image = self.loadImage("Lover/Frames/l1.gif","imagenes",alpha=True)
+        self.path= "Lover/Frames/"
+        self.velocidad = 2
+        self.hp = 30
+        self.delayHeart = 0
+
+    def enamorar(self,objetivo,tiempo,etapa):
+        self.mover(objetivo,tiempo,etapa)
+        a = uniform(0,1)
+        if a<=0.3 and self.delayHeart == 0:
+            a = Corazon(self.rect.centerx,self.rect.centery,self.loadImage)
+            etapa.heart.append(a)
+            self.delayHeart=1
+        if self.delayHeart>0:
+            self.delayHeart += tiempo
+        if self.delayHeart>=3001:
+            self.delayHeart = 0
+
+

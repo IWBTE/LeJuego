@@ -9,8 +9,10 @@ from math import floor
 
 #Mis modulos
 from Menu import Menu
-#from Etapa import Etapa
-
+from Etapa import Etapa
+from GameOver import GameOver
+from Boss import Montes
+from Victory import Victory
 #Constantes
 
 SCREEN_WIDTH = 640
@@ -51,16 +53,29 @@ def main():
     clock = pygame.time.Clock()
 
     #Ejecutamos el Menu
+    continuar = True
+    
 
     miMenu = Menu(load_image,clock,screen)
     miMenu.ejecutarMenu()
+    jefecitos = dict()
+    jefecitos["Raul"] = Montes
+    while continuar:
 
-    #Ejecutamos la Etapa
+        #Ejecutamos la Etapa
 
-    miEtapa = Etapa(load_image,clock,screen)
-    miEtapa.ejecutarEtapa("leJuego")
+        miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,3,jefecitos["Raul"](load_image),"Raul")
+        var = miEtapa.ejecutarEtapa("leJuego")
+
+        if var:
+            miVic = Victory(load_image,clock,screen)
+            continuar = miVic.ejecutarMenu()
+        else:
+            miGO = GameOver(load_image,clock,screen)
+            continuar = miGO.ejecutarMenu()
 
     pygame.mixer.quit()
+    pygame.display.quit()
     print "GG"
 
 if __name__ == "__main__":
