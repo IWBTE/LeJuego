@@ -5,7 +5,7 @@
 	<Version>100</Version>
 	<Date>20-06-2014</Date>
 	<Description>Boxhead</Description>
-	<MainClass name="IWBTE" file="./games/Proyecto1/IWBTE.py"/>
+	<MainClass name="IWBTE" file="./games/Proyecto 1.1/IWBTE.py"/>
 
 	<Authors>
 		<Author name="Adrián Soto"/>
@@ -14,7 +14,7 @@
 		
 	</Authors>
 	<Screenshots>
-		<Screenshot src="./games/Proyecto1/imagenes/Intro.png"/>	
+		<Screenshot src="./games/Proyecto 1.1/imagenes/Intro.png"/>	
 	</Screenshots>
 	<Services>		
 	</Services>
