@@ -22,6 +22,8 @@ from Serpiente import Serpiente
 from Boss import Montes
 from Ataques import balazo
 
+from Arbol import Arbol
+
 
 class dummysound:
     def play(self): pass
@@ -69,6 +71,8 @@ class Etapa:
         
         self.lovers = []
         self.zorrones = []
+
+        self.arboles = []
 
         self.ataqueActual = balazo
 
@@ -284,6 +288,18 @@ class Etapa:
             while seguir:
                 pass
 
+    def Obstaculos(self):
+        i = 0
+        nivel = 4
+        while i < nivel:
+            posx = random.randint(0, 640)
+            posy = ramdom.randint(0, 480)
+            self.arboles.append(Arbol(posx, posy,self.cargaImagen))
+            i+=1
+                
+
+        
+
     def ejecutarEtapa(self, cancion):
 
         pygame.mixer.music.load(cancion+".wav")
@@ -302,6 +318,8 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.spawnEnemy(tiempo)
+
+            
 
             self.moverZorrones(tiempo,Vicho)
             self.moverLovers(tiempo,Vicho)
