@@ -8,10 +8,10 @@ import time
 from math import floor
 
 class Arbol(pygame.sprite.Sprite):
-    def __init__ (self,posx,posy,load_image):
+    def __init__ (self,posx,posy,_loadImage):
         pygame.sprite.Sprite.__init__(self)
-        self.image = load_image("Arbol.png", "imagenes", alpha=True)
-        self.rect = Rect(0,0,10,10)
+        self.loadImage = _loadImage
+        self.image = self.loadImage("Arbol.png", "imagenes", alpha=True)
+        self.rect = Rect(0,0,10,20)
         self.rect.centerx = posx
         self.rect.centery = posy
-        self.time = 0

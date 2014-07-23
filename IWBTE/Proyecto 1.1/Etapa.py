@@ -289,13 +289,9 @@ class Etapa:
                 pass
 
     def Obstaculos(self):
-        i = 0
-        nivel = 4
-        while i < nivel:
-            posx = random.randint(0, 640)
-            posy = ramdom.randint(0, 480)
-            self.arboles.append(Arbol(posx, posy,self.cargaImagen))
-            i+=1
+        self.arboles.append(Arbol(240,120,self.cargaImagen))
+            
+        
                 
 
         
@@ -306,6 +302,8 @@ class Etapa:
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen)
         miHP = HP(self.cargaImagen)
+        self.Obstaculos()
+        
         
         while self.continuar and self.killed<self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
