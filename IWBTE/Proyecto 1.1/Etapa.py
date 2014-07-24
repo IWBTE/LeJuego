@@ -58,6 +58,8 @@ class Etapa:
         self.lastSpawn = 0
         self.spawned = 0
         self.enemigosEtapa = _enemigosEtapa
+        self.px = 0
+        self.py = 0
 
         self.killed = 0
         self.jefe = _jefe
@@ -289,7 +291,17 @@ class Etapa:
                 pass
 
     def Obstaculos(self):
-        self.arboles.append(Arbol(240,120,self.cargaImagen))
+        count = 0
+        while count < 4 :
+            self.px = randint(0,610)
+            self.py = randint(0,480)
+            self.arboles.append(Arbol(self.px,self.py,self.cargaImagen))
+            count += 1
+        
+
+    def ActualizarObstaculos(self):
+        for i in self.arboles:
+            (self.screen).blit(i.image, i.rect)
             
         
                 
@@ -303,7 +315,8 @@ class Etapa:
         Vicho = Personaje(self.cargaImagen)
         miHP = HP(self.cargaImagen)
         self.Obstaculos()
-        
+
+      
         
         while self.continuar and self.killed<self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
@@ -317,7 +330,7 @@ class Etapa:
 
             self.spawnEnemy(tiempo)
 
-            
+            self.ActualizarObstaculos()
 
             self.moverZorrones(tiempo,Vicho)
             self.moverLovers(tiempo,Vicho)
