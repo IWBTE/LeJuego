@@ -23,6 +23,7 @@ from Boss import Montes
 from Ataques import balazo
 
 from Arbol import Arbol
+from Basura import Basura
 
 
 class dummysound:
@@ -75,6 +76,7 @@ class Etapa:
         self.zorrones = []
 
         self.arboles = []
+        self.basureros = []
 
         self.ataqueActual = balazo
 
@@ -293,14 +295,24 @@ class Etapa:
     def Obstaculos(self):
         count = 0
         while count < 4 :
-            self.px = randint(0,610)
-            self.py = randint(0,480)
+            self.px = randint(0,538)
+            self.py = randint(0,380)
             self.arboles.append(Arbol(self.px,self.py,self.cargaImagen))
+            count += 1
+
+        count = 0
+        while count < 6 :
+            self.px = randint(0,595)
+            self.py = randint(0,450)
+            self.basureros.append(Basura(self.px,self.py,self.cargaImagen))
             count += 1
         
 
     def ActualizarObstaculos(self):
         for i in self.arboles:
+            (self.screen).blit(i.image, i.rect)
+
+        for i in self.basureros:
             (self.screen).blit(i.image, i.rect)
             
         
