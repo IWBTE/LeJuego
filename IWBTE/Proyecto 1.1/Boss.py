@@ -28,7 +28,7 @@ class Boss(pygame.sprite.Sprite):
 class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 150
+        self.hp = 50
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
         self.velocidad = -4
         self.lugar = "l"

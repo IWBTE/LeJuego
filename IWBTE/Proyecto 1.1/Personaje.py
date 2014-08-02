@@ -8,7 +8,7 @@ import time
 from math import floor
 
 class Personaje(pygame.sprite.Sprite):
-    def __init__(self, _cargaImagen):
+    def __init__(self, _cargaImagen, _posx, _posy):
         pygame.sprite.Sprite.__init__(self)
         self.frameActual = 1
         self.asesinatos = 0
@@ -16,8 +16,8 @@ class Personaje(pygame.sprite.Sprite):
         self.cargaImagen = _cargaImagen
         self.image = self.cargaImagen("Vicho/Frames/r1.gif", "imagenes", alpha=True)
         self.rect = Rect(0,0,15,30)
-        self.rect.centerx = 100
-        self.rect.centery = 240
+        self.rect.centerx = _posx
+        self.rect.centery = _posy
         self.retrasoBalas = 0
         self.invencible = False
         self.ultimoHit = 0

@@ -60,12 +60,21 @@ def main():
     miMenu.ejecutarMenu()
     jefecitos = dict()
     jefecitos["Raul"] = Montes
+    var=True
+    enemigos = [3,7]
+    count = 0
+    x=100
+    y=240
     while continuar:
 
         #Ejecutamos la Etapa
-
-        miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,3,jefecitos["Raul"](load_image),"Raul")
-        var = miEtapa.ejecutarEtapa("leJuego")
+        while var and count < len(enemigos):
+            miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,enemigos[count],jefecitos["Raul"](load_image),"Raul",x,y)
+            var = miEtapa.ejecutarEtapa("leJuego")
+            x = miEtapa.cx
+            y = miEtapa.cy
+            count += 1
+        
 
         if var:
             miVic = Victory(load_image,clock,screen)

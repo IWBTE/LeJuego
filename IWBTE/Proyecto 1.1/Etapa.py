@@ -38,7 +38,7 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe, _posx, _posy):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
@@ -47,6 +47,8 @@ class Etapa:
         self.probabilidadEnergetica = _probabilidadEnergetica
 
 
+        self.cx = _posx
+        self.cy = _posy
         self.especialJefe = dict()
         self.especialJefe["Raul"] = self.packRaul
         
@@ -288,7 +290,7 @@ class Etapa:
 
         pygame.mixer.music.load(cancion+".wav")
         pygame.mixer.music.play(-1)
-        Vicho = Personaje(self.cargaImagen)
+        Vicho = Personaje(self.cargaImagen,self.cx,self.cy)
         miHP = HP(self.cargaImagen)
         
         while self.continuar and self.killed<self.enemigosEtapa:
@@ -371,6 +373,8 @@ class Etapa:
             if Vicho.hp <=0:                
                 return False
             if self.jefe.hp <=0:
+                self.cx = Vicho.rect.centerx
+                self.cy = Vicho.rect.centery
                 return True
             
 
