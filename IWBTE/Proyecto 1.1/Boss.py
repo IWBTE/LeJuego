@@ -40,7 +40,6 @@ class Montes(Boss):
         if self.frameActual>8:
             self.frameActual=1
         
-
     def mover(self,tiempo):
         self.cambiarFrame()
         if self.introduccion<=3000:
@@ -71,3 +70,52 @@ class Montes(Boss):
         if self.Fireball>=7500:
             self.Fireball=0
             etapa.proyJefe.append(Fireball(self.rect.centerx,self.rect.centery,self.loadImage))
+
+class Dissett(Boss):
+    def __init__(self, _loadImage):
+        Boss.__init__(self,_loadImage)
+        self.hp = 200
+        self.image = self.loadImage("Dissett/d1.gif","imagenes",alpha=False)
+        self.velocidad = -7
+        self.lugar = "l"
+        self.lastAt = 0
+        self.Fireball = 0
+
+    def cambiarFrame(self):
+        self.frameActual+=1
+        if self.frameActual>8:
+            self.frameActual=1
+        
+
+    def mover(self, objetivo, reloj, etapa):
+        a = self.frameActual//3 + 1
+        if objetivo.rect.centerx - self.rect.centerx >= 0:
+            self.image = self.loadImage(self.path+"r"+str(a)+".gif","imagenes",alpha=False)            
+            respaldo = self.rect.centerx
+            self.rect.centerx += self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(etapa):
+                self.rect.centerx = respaldo
+        else:
+            self.image = self.loadImage(self.path+"l"+str(a)+".gif","imagenes",alpha=False)            
+            respaldo = self.rect.centerx
+            self.rect.centerx -= self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(etapa):
+                self.rect.centerx = respaldo
+
+        if objetivo.rect.centery - self.rect.centery >= 0:
+            if objetivo.rect.centery - self.rect.centery >= 10:
+                self.image = self.loadImage(self.path+"d"+str(a)+".gif","imagenes",alpha=False)
+            respaldo = self.rect.centery
+            self.rect.centery += self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(etapa):
+                self.rect.centery = respaldo
+        else:
+            if objetivo.rect.centery - self.rect.centery <= -10:
+                self.image = self.loadImage(self.path+"u"+str(a)+".gif","imagenes",alpha=False)
+            respaldo = self.rect.centery
+            self.rect.centery -= self.velocidad*(reloj/30)
+            if self.hustonTenemosProblemas(etapa):
+                self.rect.centery = respaldo
+
+
+       
