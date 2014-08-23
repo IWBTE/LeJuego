@@ -62,9 +62,9 @@ def main():
     jefecitos["Raul"] = Montes
     jefecitos["Luis"] = Dissett
     var=True
-    enemigos = [3,7]
+    enemigos = [3,3]
     bosses = ["Raul","Luis"]
-    count = 0
+    count = 1
     x=100
     y=240
     while continuar:
@@ -80,11 +80,15 @@ def main():
 
         if var:
             miVic = Victory(load_image,clock,screen)
-            continuar = miVic.ejecutarMenu()
+            var = miVic.ejecutarMenu()
+            if not(var):
+                break
             count = 0
         else:
             miGO = GameOver(load_image,clock,screen)
-            continuar = miGO.ejecutarMenu()
+            var = miGO.ejecutarMenu()
+            if not(var):
+                break
             count = 0
 
     pygame.mixer.quit()

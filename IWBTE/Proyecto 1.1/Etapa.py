@@ -122,14 +122,24 @@ class Etapa:
                 self.proyJefe[i].cambiarFrame()
                 if self.proyJefe[i].mov:
                     (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
+                    
+    def moverProyLuis(self,tiempo,jugador):
+        if len(self.proyJefe)>0:
+            for i in range(len(self.proyJefe)):
+                self.proyJefe[i].mover(tiempo,jugador)
+                self.proyJefe[i].cambiarFrame()
+                if self.proyJefe[i].mov:
+                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
 
     def packRaul(self,tiempo,jugador):
         self.raulPower(jugador)
         self.moverProyRaul(tiempo,jugador)
-        self.eliminarProyRaul()
+        self.eliminarProyJefe()
         
     def packLuis(self,tiempo,jugador):
-        pass
+        self.luisPower(jugador)
+        self.moverProyLuis(tiempo, jugador)
+        self.eliminarProyJefe()
                         
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
@@ -178,6 +188,14 @@ class Etapa:
                 if var>0:
                     jugador.hp-=var
                               
+    def luisPower(self,jugador):
+        if len(self.proyJefe)>0:
+            for i in (self.proyJefe):
+                var = i.atRaul(jugador)
+                if var>0:
+                    jugador.hp-=var
+                              
+
 
     def eliminarBalas(self):
         if len(self.balas)>0:
@@ -197,7 +215,7 @@ class Etapa:
                 else:
                     count +=1
 
-    def eliminarProyRaul(self):
+    def eliminarProyJefe(self):
         if len(self.proyJefe)>0:
             count = 0
             while count < len(self.proyJefe):

@@ -20,7 +20,7 @@ class GameOver:
             (self.clock).tick(42)
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()
-            if pygame.key.get_pressed()[K_k]:
+            if pygame.key.get_pressed()[K_w]:
                 pygame.mixer.stop()
                 return True
             if pygame.key.get_pressed()[K_q]:
