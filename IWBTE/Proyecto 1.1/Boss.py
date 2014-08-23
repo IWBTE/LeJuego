@@ -29,7 +29,7 @@ class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
         self.hp = 150
-        self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
+        self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=True)
         self.velocidad = -4
         self.lugar = "l"
         self.lastAt = 0
@@ -50,7 +50,7 @@ class Montes(Boss):
         if self.rect.centery<=100:
             self.rect.centery += 3*(tiempo/30)
             a = self.frameActual//3 + 1
-            self.image = self.loadImage("Montes/d"+str(a)+".gif","imagenes",alpha=False)
+            self.image = self.loadImage("Montes/d"+str(a)+".gif","imagenes",alpha=True)
         if self.introduccion > 3000:
             if self.rect.centerx <10:
                 self.velocidad = 4
@@ -60,7 +60,7 @@ class Montes(Boss):
                 self.lugar = "l"
             self.rect.centerx += self.velocidad*(tiempo/30)
             a = self.frameActual//3 + 1
-            self.image = self.loadImage("Montes/"+self.lugar+str(a)+".gif","imagenes",alpha=False)
+            self.image = self.loadImage("Montes/"+self.lugar+str(a)+".gif","imagenes",alpha=True)
 
     def atacar(self,tiempo, objetivo,etapa):
         self.lastAt+=tiempo
