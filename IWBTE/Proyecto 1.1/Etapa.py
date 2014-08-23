@@ -24,6 +24,7 @@ from Ataques import balazo
 
 from Arbol import Arbol
 from Basura import Basura
+from HPB import HPB
 
 
 class dummysound:
@@ -48,7 +49,7 @@ class Etapa:
         self.screen = _screen
         self.continuar = True
         self.probabilidadEnergetica = _probabilidadEnergetica
-
+        self.asd = False
 
         self.cx = _posx
         self.cy = _posy
@@ -85,6 +86,7 @@ class Etapa:
         self.ataqueActual = balazo
 
         self.laBala = load_sound("Bala.wav")
+        self.meDieron = load_sound("Hit.wav")
 
     def spawnEnemy(self,tiempo):
         if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned < self.enemigosEtapa:
@@ -162,11 +164,13 @@ class Etapa:
             if len(self.zorrones)>0:
                 for j in range(len(self.zorrones)):
                     if i.tunazo(self.zorrones[j]):
+                        self.meDieron.play()
                         self.zorrones[j].hp -= 10
         
             if len(self.lovers)>0:
                 for k in range(len(self.lovers)):
                     if i.tunazo(self.lovers[k]):
+                        self.meDieron.play()
                         self.lovers[k].hp -= 10
 
     def chaoJefe(self):
@@ -305,6 +309,10 @@ class Etapa:
     def actualizarHP(self,HP,jugador):
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
+        
+    def actualizarHPB(self,HPB,boss):
+        HPB.actualizar(boss)
+        (self.screen).blit(HPB.image, HPB.rect)
 
     def continuar(self):
         for event in pygame.event.get():
@@ -397,10 +405,13 @@ class Etapa:
 
             if Vicho.hp <=0:
                 return False
+            if self.asd:
+                break
 
         
-        while True:
+        while not(self.asd):
             tiempo = float((self.clock).tick(42))
+            jefeHP = HPB(self.cargaImagen,self.jefe)
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()     
             Vicho.directores = []   
@@ -430,6 +441,7 @@ class Etapa:
             Vicho.poderDisparar(tiempo)
 
             self.actualizarHP(miHP,Vicho)
+            self.actualizarHPB(jefeHP, self.jefe)
 
             Vicho.invencibilidad(tiempo)
             pygame.display.flip()
@@ -440,6 +452,8 @@ class Etapa:
                 self.cx = Vicho.rect.centerx
                 self.cy = Vicho.rect.centery
                 return True
+            if self.asd:
+                break
             
 
 

@@ -45,7 +45,7 @@ class Laining(pygame.sprite.Sprite):
             self.kill()
             self.mov = False
             poisoneado.invencible = True
-            return 10
+            return 20
         else:
             return 0
 

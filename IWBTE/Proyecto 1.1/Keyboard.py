@@ -36,3 +36,5 @@ def keyboard(hero,reloj,etapa):
         hero.ultimo = "r"
     if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
         etapa.ataqueActual(hero,reloj,etapa)
+    if pygame.key.get_pressed()[K_ESCAPE]:
+        etapa.asd = True

@@ -29,7 +29,7 @@ class Boss(pygame.sprite.Sprite):
 class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 80
+        self.hp = 10
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
         self.velocidad = -4
         self.lugar = "l"
@@ -75,7 +75,7 @@ class Montes(Boss):
 class Dissett(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 150
+        self.hp = 10
         self.image = self.loadImage("Dissett/d1.gif","imagenes",alpha=False)
         self.velocidad = -2.5
         self.lugar = "l"
