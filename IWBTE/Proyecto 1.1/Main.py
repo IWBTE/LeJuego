@@ -62,7 +62,7 @@ def main():
     jefecitos["Raul"] = Montes
     jefecitos["Luis"] = Dissett
     var=True
-    enemigos = [2,2]
+    enemigos = [4,8]
     bosses = ["Raul","Luis"]
     count = 0
     x=100
