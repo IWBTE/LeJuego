@@ -11,7 +11,7 @@ from math import floor
 from Menu import Menu
 from Etapa import Etapa
 from GameOver import GameOver
-from Boss import Montes
+from Boss import Montes, Dissett
 from Victory import Victory
 #Constantes
 
@@ -60,19 +60,36 @@ def main():
     miMenu.ejecutarMenu()
     jefecitos = dict()
     jefecitos["Raul"] = Montes
+    jefecitos["Luis"] = Dissett
+    var=True
+    enemigos = [2,2]
+    bosses = ["Raul","Luis"]
+    count = 0
+    x=100
+    y=240
     while continuar:
 
         #Ejecutamos la Etapa
-
-        miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,3,jefecitos["Raul"](load_image),"Raul")
-        var = miEtapa.ejecutarEtapa("leJuego")
+        while var and count < len(enemigos):
+            miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,enemigos[count],jefecitos[bosses[count]](load_image),bosses[count],x,y)
+            var = miEtapa.ejecutarEtapa("leJuego")
+            x = miEtapa.cx
+            y = miEtapa.cy
+            count += 1
+        
 
         if var:
             miVic = Victory(load_image,clock,screen)
-            continuar = miVic.ejecutarMenu()
+            var = miVic.ejecutarMenu()
+            if not(var):
+                break
+            count = 0
         else:
             miGO = GameOver(load_image,clock,screen)
-            continuar = miGO.ejecutarMenu()
+            var = miGO.ejecutarMenu()
+            if not(var):
+                break
+            count = 0
 
     pygame.mixer.quit()
     pygame.display.quit()

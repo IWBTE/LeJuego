@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <projectDescription>
+<<<<<<< HEAD
 	<name>Proyecto 1.1</name>
+=======
+	<name>Juego</name>
+>>>>>>> dc1747140b5d259c313dba7cd1af15d4123454ae
 	<comment></comment>
 	<projects>
 	</projects>

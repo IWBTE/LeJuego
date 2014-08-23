@@ -9,7 +9,7 @@ from math import floor
 
 class Victory:
     def __init__(self,cargaImagen,_clock,_screen):
-        self.fondo = cargaImagen("Victory.png", "imagenes", alpha=False)
+        self.fondo = cargaImagen("Victory.jpg", "imagenes", alpha=False)
         self.clock = _clock
         self.screen = _screen
 
@@ -20,7 +20,7 @@ class Victory:
             (self.clock).tick(42)
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()
-            if pygame.key.get_pressed()[K_k]:
+            if pygame.key.get_pressed()[K_z]:
                 pygame.mixer.stop()
                 return True
             if pygame.key.get_pressed()[K_q]:

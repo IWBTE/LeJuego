@@ -22,6 +22,10 @@ from Serpiente import Serpiente
 from Boss import Montes
 from Ataques import balazo
 
+from Arbol import Arbol
+from Basura import Basura
+from HPB import HPB
+
 
 class dummysound:
     def play(self): pass
@@ -38,17 +42,21 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe, _posx, _posy):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
         self.screen = _screen
         self.continuar = True
         self.probabilidadEnergetica = _probabilidadEnergetica
+        self.asd = False
 
-
+        self.cx = _posx
+        self.cy = _posy
         self.especialJefe = dict()
         self.especialJefe["Raul"] = self.packRaul
+        
+        self.especialJefe["Luis"] = self.packLuis
         
         self.enemies = 0
         self.spawnTime = _spawnTime
@@ -56,6 +64,8 @@ class Etapa:
         self.lastSpawn = 0
         self.spawned = 0
         self.enemigosEtapa = _enemigosEtapa
+        self.px = 0
+        self.py = 0
 
         self.killed = 0
         self.jefe = _jefe
@@ -70,9 +80,13 @@ class Etapa:
         self.lovers = []
         self.zorrones = []
 
+        self.arboles = []
+        self.basureros = []
+
         self.ataqueActual = balazo
 
         self.laBala = load_sound("Bala.wav")
+        self.meDieron = load_sound("Hit.wav")
 
     def spawnEnemy(self,tiempo):
         if self.lastSpawn>=self.spawnTime and self.enemies<self.maxEnemies and self.spawned < self.enemigosEtapa:
@@ -110,12 +124,25 @@ class Etapa:
                 self.proyJefe[i].cambiarFrame()
                 if self.proyJefe[i].mov:
                     (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
+                    
+    def moverProyLuis(self,tiempo,jugador):
+        if len(self.proyJefe)>0:
+            for i in range(len(self.proyJefe)):
+                self.proyJefe[i].mover(tiempo,jugador)
+                self.proyJefe[i].cambiarFrame()
+                if self.proyJefe[i].mov:
+                    (self.screen).blit(self.proyJefe[i].image,self.proyJefe[i].rect)
 
     def packRaul(self,tiempo,jugador):
         self.raulPower(jugador)
         self.moverProyRaul(tiempo,jugador)
-        self.eliminarProyRaul()
-                    
+        self.eliminarProyJefe()
+        
+    def packLuis(self,tiempo,jugador):
+        self.luisPower(jugador)
+        self.moverProyLuis(tiempo, jugador)
+        self.eliminarProyJefe()
+                        
     def moverZorrones(self,leReloj,jugador):
         if len(self.zorrones)>0:
             for i in range(len(self.zorrones)):
@@ -137,11 +164,13 @@ class Etapa:
             if len(self.zorrones)>0:
                 for j in range(len(self.zorrones)):
                     if i.tunazo(self.zorrones[j]):
+                        self.meDieron.play()
                         self.zorrones[j].hp -= 10
         
             if len(self.lovers)>0:
                 for k in range(len(self.lovers)):
                     if i.tunazo(self.lovers[k]):
+                        self.meDieron.play()
                         self.lovers[k].hp -= 10
 
     def chaoJefe(self):
@@ -163,6 +192,14 @@ class Etapa:
                 if var>0:
                     jugador.hp-=var
                               
+    def luisPower(self,jugador):
+        if len(self.proyJefe)>0:
+            for i in (self.proyJefe):
+                var = i.atRaul(jugador)
+                if var>0:
+                    jugador.hp-=var
+                              
+
 
     def eliminarBalas(self):
         if len(self.balas)>0:
@@ -182,7 +219,7 @@ class Etapa:
                 else:
                     count +=1
 
-    def eliminarProyRaul(self):
+    def eliminarProyJefe(self):
         if len(self.proyJefe)>0:
             count = 0
             while count < len(self.proyJefe):
@@ -272,6 +309,10 @@ class Etapa:
     def actualizarHP(self,HP,jugador):
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
+        
+    def actualizarHPB(self,HPB,boss):
+        HPB.actualizar(boss)
+        (self.screen).blit(HPB.image, HPB.rect)
 
     def continuar(self):
         for event in pygame.event.get():
@@ -284,12 +325,43 @@ class Etapa:
             while seguir:
                 pass
 
+    def Obstaculos(self):
+        count = 0
+        while count < 4 :
+            self.px = randint(0,538)
+            self.py = randint(0,380)
+            self.arboles.append(Arbol(self.px,self.py,self.cargaImagen))
+            count += 1
+
+        count = 0
+        while count < 6 :
+            self.px = randint(0,595)
+            self.py = randint(0,450)
+            self.basureros.append(Basura(self.px,self.py,self.cargaImagen))
+            count += 1
+        
+
+    def ActualizarObstaculos(self):
+        for i in self.arboles:
+            (self.screen).blit(i.image, i.rect)
+
+        for i in self.basureros:
+            (self.screen).blit(i.image, i.rect)
+            
+        
+                
+
+        
+
     def ejecutarEtapa(self, cancion):
 
         pygame.mixer.music.load(cancion+".wav")
         pygame.mixer.music.play(-1)
-        Vicho = Personaje(self.cargaImagen)
+        Vicho = Personaje(self.cargaImagen,self.cx,self.cy)
         miHP = HP(self.cargaImagen)
+        self.Obstaculos()
+
+      
         
         while self.continuar and self.killed<self.enemigosEtapa:
             tiempo = float((self.clock).tick(42))
@@ -302,6 +374,8 @@ class Etapa:
             (self.screen).blit(Vicho.image, Vicho.rect)
 
             self.spawnEnemy(tiempo)
+
+            self.ActualizarObstaculos()
 
             self.moverZorrones(tiempo,Vicho)
             self.moverLovers(tiempo,Vicho)
@@ -331,10 +405,13 @@ class Etapa:
 
             if Vicho.hp <=0:
                 return False
+            if self.asd:
+                break
 
         
-        while True:
+        while not(self.asd):
             tiempo = float((self.clock).tick(42))
+            jefeHP = HPB(self.cargaImagen,self.jefe)
             (self.screen).blit(self.fondo, (0, 0))
             pygame.event.get()     
             Vicho.directores = []   
@@ -364,6 +441,7 @@ class Etapa:
             Vicho.poderDisparar(tiempo)
 
             self.actualizarHP(miHP,Vicho)
+            self.actualizarHPB(jefeHP, self.jefe)
 
             Vicho.invencibilidad(tiempo)
             pygame.display.flip()
@@ -371,7 +449,11 @@ class Etapa:
             if Vicho.hp <=0:                
                 return False
             if self.jefe.hp <=0:
+                self.cx = Vicho.rect.centerx
+                self.cy = Vicho.rect.centery
                 return True
+            if self.asd:
+                break
             
 
 
