@@ -76,7 +76,7 @@ class Dissett(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
         self.hp = 100
-        self.image = self.loadImage("Dissett/d1.gif","imagenes",alpha=False)
+        self.image = self.loadImage("Dissett/d1.gif","imagenes",alpha=True)
         self.velocidad = -2.5
         self.lugar = "l"
         self.lastAt = 0
