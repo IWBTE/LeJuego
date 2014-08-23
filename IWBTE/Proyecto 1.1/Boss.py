@@ -8,6 +8,7 @@ import time
 from math import floor
 from Serpiente import Serpiente
 from Fireball import Fireball
+from Laining import Laining
 
 class Boss(pygame.sprite.Sprite):
     def __init__(self, _loadImage):
@@ -28,7 +29,7 @@ class Boss(pygame.sprite.Sprite):
 class Montes(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 150
+        self.hp = 80
         self.image = self.loadImage("Montes/d1.gif","imagenes",alpha=False)
         self.velocidad = -4
         self.lugar = "l"
@@ -74,12 +75,14 @@ class Montes(Boss):
 class Dissett(Boss):
     def __init__(self, _loadImage):
         Boss.__init__(self,_loadImage)
-        self.hp = 200
+        self.hp = 150
         self.image = self.loadImage("Dissett/d1.gif","imagenes",alpha=False)
-        self.velocidad = -7
+        self.velocidad = -2.5
         self.lugar = "l"
         self.lastAt = 0
-        self.Fireball = 0
+        self.rasho = 0
+        self.flash = 0
+        self.rage = 0
 
     def cambiarFrame(self):
         self.frameActual+=1
@@ -87,35 +90,55 @@ class Dissett(Boss):
             self.frameActual=1
         
 
-    def mover(self, objetivo, reloj, etapa):
-        a = self.frameActual//3 + 1
-        if objetivo.rect.centerx - self.rect.centerx >= 0:
-            self.image = self.loadImage(self.path+"r"+str(a)+".gif","imagenes",alpha=False)            
-            respaldo = self.rect.centerx
-            self.rect.centerx += self.velocidad*(reloj/30)
-            if self.hustonTenemosProblemas(etapa):
-                self.rect.centerx = respaldo
-        else:
-            self.image = self.loadImage(self.path+"l"+str(a)+".gif","imagenes",alpha=False)            
-            respaldo = self.rect.centerx
-            self.rect.centerx -= self.velocidad*(reloj/30)
-            if self.hustonTenemosProblemas(etapa):
-                self.rect.centerx = respaldo
+    def mover(self,tiempo):
+        self.cambiarFrame()
+        self.flash += tiempo
+        if self.flash >= 6000:
+            self.flash = 0
+            if self.rect.centery<200:
+                self.rect.centery = 350
+            else:
+                self.rect.centery = 100
+        if self.introduccion<=3000:
+            self.introduccion+=tiempo
+        if self.introduccion>=3000 and self.invencible:
+            self.invencible = False
+        if self.rect.centery<=100:
+            self.rect.centery += 3*(tiempo/30)
+            a = self.frameActual//3 + 1
+            self.image = self.loadImage("Dissett/d"+str(a)+".gif","imagenes",alpha=False)
+        if self.introduccion > 3000:
+            if self.rect.centerx <10:
+                self.velocidad = 2.5
+                self.lugar = "r"
+            if self.rect.centerx > 600:
+                self.velocidad = -2.5
+                self.lugar = "l"
+            self.rect.centerx += self.velocidad*(tiempo/30)
+            a = self.frameActual//3 + 1
+            self.image = self.loadImage("Dissett/"+self.lugar+str(a)+".gif","imagenes",alpha=False)
 
-        if objetivo.rect.centery - self.rect.centery >= 0:
-            if objetivo.rect.centery - self.rect.centery >= 10:
-                self.image = self.loadImage(self.path+"d"+str(a)+".gif","imagenes",alpha=False)
-            respaldo = self.rect.centery
-            self.rect.centery += self.velocidad*(reloj/30)
-            if self.hustonTenemosProblemas(etapa):
-                self.rect.centery = respaldo
-        else:
-            if objetivo.rect.centery - self.rect.centery <= -10:
-                self.image = self.loadImage(self.path+"u"+str(a)+".gif","imagenes",alpha=False)
-            respaldo = self.rect.centery
-            self.rect.centery -= self.velocidad*(reloj/30)
-            if self.hustonTenemosProblemas(etapa):
-                self.rect.centery = respaldo
+    
+    def atacar(self,tiempo, objetivo,etapa):
+        self.lastAt+=tiempo
+        self.rasho+=tiempo
+        self.rage += tiempo
+        if self.rage >= 10000:
+            if self.rasho>=500:
+                self.rasho=0
+                if self.rect.centery <200:
+                    etapa.proyJefe.append(Laining(self.rect.centerx,self.rect.centery,self.loadImage,'r'))
+                else:
+                    etapa.proyJefe.append(Laining(self.rect.centerx,self.rect.centery,self.loadImage,'u'))
+                if self.rage> 12600:
+                    self.rage = 0
+            
+        if self.rasho>=1800:
+            self.rasho=0
+            if self.rect.centery <200:
+                etapa.proyJefe.append(Laining(self.rect.centerx,self.rect.centery,self.loadImage,'r'))
+            else:
+                etapa.proyJefe.append(Laining(self.rect.centerx,self.rect.centery,self.loadImage,'u'))
 
 
        
