@@ -67,15 +67,17 @@ def main():
     count = 0
     x=100
     y=240
+    etapa = 1
     while continuar:
 
         #Ejecutamos la Etapa
         while var and count < len(enemigos):
-            miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,enemigos[count],jefecitos[bosses[count]](load_image),bosses[count],x,y)
+            miEtapa = Etapa(load_image,clock,screen,4,3000,0.6,enemigos[count],jefecitos[bosses[count]](load_image),bosses[count],x,y,etapa)
             var = miEtapa.ejecutarEtapa("leJuego")
             x = miEtapa.cx
             y = miEtapa.cy
             count += 1
+            etapa+=1
         
 
         if var:

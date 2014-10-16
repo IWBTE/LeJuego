@@ -6,6 +6,7 @@ from random import uniform
 from random import randint
 import time
 from math import floor
+from Ataques import fuegazo, balazo
 from Bala import Bala
 
 def keyboard(hero,reloj,etapa):
@@ -34,7 +35,17 @@ def keyboard(hero,reloj,etapa):
         if not("r" in hero.directores):
             hero.directores.append("r")
         hero.ultimo = "r"
-    if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0:
+    if pygame.key.get_pressed()[K_k] and hero.retrasoBalas == 0: 
         etapa.ataqueActual(hero,reloj,etapa)
+    if pygame.key.get_pressed()[K_j] and etapa.countCambio<=0:
+        etapa.countCambio=1000
+        if etapa.ataqueActual==fuegazo:
+            etapa.ataqueActual=balazo
+        elif etapa.ataqueActual==balazo and etapa.num>=2:
+            etapa.ataqueActual = fuegazo;
     if pygame.key.get_pressed()[K_ESCAPE]:
         etapa.asd = True
+    if etapa.countCambio>=0:
+        etapa.countCambio-=reloj
+        
+        

@@ -11,7 +11,7 @@ class HP(pygame.sprite.Sprite):
     def __init__(self,_cargar):
         pygame.sprite.Sprite.__init__(self)
         self.cargar = _cargar
-        self.image = self.cargar("Barra HP/h100.gif", "imagenes", alpha = True)
+        self.image = self.cargar("Barra HP/h10.gif", "imagenes", alpha = True)
         self.rect = self.image.get_rect()
         self.rect.centerx=115
         self.rect.centery=20

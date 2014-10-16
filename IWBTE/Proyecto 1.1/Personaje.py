@@ -13,6 +13,7 @@ class Personaje(pygame.sprite.Sprite):
         self.frameActual = 1
         self.asesinatos = 0
         self.hp = 100
+        self.mp = 100
         self.cargaImagen = _cargaImagen
         self.image = self.cargaImagen("Vicho/Frames/r1.gif", "imagenes", alpha=True)
         self.rect = Rect(0,0,15,30)

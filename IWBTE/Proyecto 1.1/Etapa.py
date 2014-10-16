@@ -14,13 +14,14 @@ from Enemy import Zorron
 from Enemy import Lover
 from Corazon import Corazon
 from HP import HP
+from MP import MP
 from EnergyDrink import EnergyDrink
 from Keyboard import keyboard
 
 from Serpiente import Serpiente
 
 from Boss import Montes
-from Ataques import balazo
+from Ataques import balazo,fuegazo
 
 from Arbol import Arbol
 from Basura import Basura
@@ -42,7 +43,7 @@ def load_sound(file):
     return dummysound()
 
 class Etapa:
-    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe, _posx, _posy):
+    def __init__(self,_cargaImagen,_clock,_screen, _maxEnemies, _spawnTime, _probabilidadEnergetica, _enemigosEtapa,_jefe,_nombreJefe, _posx, _posy, num):
         self.cargaImagen = _cargaImagen
         self.fondo = self.cargaImagen("fondo.png", "imagenes", alpha=False)
         self.clock = _clock
@@ -51,6 +52,8 @@ class Etapa:
         self.probabilidadEnergetica = _probabilidadEnergetica
         self.asd = False
 
+
+        self.num = num
         self.cx = _posx
         self.cy = _posy
         self.especialJefe = dict()
@@ -59,6 +62,7 @@ class Etapa:
         self.especialJefe["Luis"] = self.packLuis
         
         self.enemies = 0
+        self.countCambio = 0
         self.spawnTime = _spawnTime
         self.maxEnemies = _maxEnemies
         self.lastSpawn = 0
@@ -165,13 +169,21 @@ class Etapa:
                 for j in range(len(self.zorrones)):
                     if i.tunazo(self.zorrones[j]):
                         self.meDieron.play()
-                        self.zorrones[j].hp -= 10
+                        if type(i).__name__ == 'BolaFuego':
+                            self.zorrones[j].hp -= 5
+                        else:
+                            self.zorrones[j].hp -= 10
+                        
         
             if len(self.lovers)>0:
                 for k in range(len(self.lovers)):
                     if i.tunazo(self.lovers[k]):
                         self.meDieron.play()
-                        self.lovers[k].hp -= 10
+                        if type(i).__name__ == 'BolaFuego':
+                            self.lovers[k].hp -= 10
+                        else:
+                            self.lovers[k].hp -= 10
+                        
 
     def chaoJefe(self):
         if not(self.jefe.invencible):
@@ -270,7 +282,13 @@ class Etapa:
             if i.bebible:
                 (self.screen).blit(i.image,i.rect)
                 if i.africano(jugador):
-                    jugador.hp = 100
+                    if jugador.hp <= 80:
+                        jugador.hp += 20
+                    else:
+                        jugador.hp = 100
+                    if jugador.mp <=90:
+                        jugador.mp+=10
+                    
 
     def tiempoEnergeticas(self, tiempo):
         for i in self.energeticas:
@@ -309,6 +327,10 @@ class Etapa:
     def actualizarHP(self,HP,jugador):
         HP.actualizar(jugador)
         (self.screen).blit(HP.image, HP.rect)
+        
+    def actualizarMP(self,MP,jugador):
+        MP.actualizar(jugador)
+        (self.screen).blit(MP.image, MP.rect)
         
     def actualizarHPB(self,HPB,boss):
         HPB.actualizar(boss)
@@ -359,6 +381,7 @@ class Etapa:
         pygame.mixer.music.play(-1)
         Vicho = Personaje(self.cargaImagen,self.cx,self.cy)
         miHP = HP(self.cargaImagen)
+        miMP = MP(self.cargaImagen)
         self.Obstaculos()
 
       
@@ -398,6 +421,8 @@ class Etapa:
             Vicho.poderDisparar(tiempo)
 
             self.actualizarHP(miHP,Vicho)
+            self.actualizarMP(miMP,Vicho)
+
 
             Vicho.invencibilidad(tiempo)
 
@@ -441,6 +466,7 @@ class Etapa:
             Vicho.poderDisparar(tiempo)
 
             self.actualizarHP(miHP,Vicho)
+            self.actualizarMP(miMP,Vicho)
             self.actualizarHPB(jefeHP, self.jefe)
 
             Vicho.invencibilidad(tiempo)
